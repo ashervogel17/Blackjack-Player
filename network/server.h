@@ -23,23 +23,5 @@ Elias Rosenberg, 22F, CS50
 #include <unistd.h>
 #define PORT 8014
 
-int socket (int family, int type, int protocol);
-int bind(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif //__SERVER_H

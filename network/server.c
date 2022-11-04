@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include "server.h"
 #include <unistd.h>
-#define PORT 8080
+#define PORT 8014
 int main(int argc, char const* argv[])
 {
 	int server_fd, new_socket, valread;

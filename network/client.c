@@ -5,7 +5,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#define PORT 8080
+#define PORT 8014 //port 8000 + team number --> 8014
 
 int main(int argc, char const* argv[])
 {
@@ -13,7 +13,7 @@ int main(int argc, char const* argv[])
 	struct sockaddr_in serv_addr;
 	char* hello = "Hello from client";
 	char buffer[1024] = { 0 };
-	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) { //create the socket object
 		printf("\n Socket creation error \n");
 		return -1;
 	}
@@ -31,15 +31,15 @@ int main(int argc, char const* argv[])
 	}
 
 	if ((client_fd
-		= connect(sock, (struct sockaddr*)&serv_addr,
+		= connect(sock, (struct sockaddr*)&serv_addr, //connect to the address saved by serv_adder
 				sizeof(serv_addr)))
 		< 0) {
 		printf("\nConnection Failed \n");
 		return -1;
 	}
-	send(sock, hello, strlen(hello), 0);
+	send(sock, hello, strlen(hello), 0); //send here is equivalent to write
 	printf("Hello message sent\n");
-	valread = read(sock, buffer, 1024);
+	valread = read(sock, buffer, 1024); //we read the response on the socket. 
 	printf("%s\n", buffer);
 
 	// closing the connected socket
