@@ -25,7 +25,7 @@ int main(int argc, char const* argv[])
 
 	// Forcefully attaching socket to the port 8080
 	if (setsockopt(server_fd, SOL_SOCKET,
-				SO_REUSEADDR | SO_REUSEPORT, &opt,
+				SO_REUSEADDR | SO_BROADCAST, &opt,
 				sizeof(opt))) {
 		perror("setsockopt");
 		exit(EXIT_FAILURE);
@@ -45,6 +45,8 @@ int main(int argc, char const* argv[])
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
+	printf("Server listening on port: %d\n", PORT); 
+
 	if ((new_socket
 		= accept(server_fd, (struct sockaddr*)&address,
 				(socklen_t*)&addrlen))
