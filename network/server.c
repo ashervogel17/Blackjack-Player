@@ -52,11 +52,18 @@ int main(int argc, char const* argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	valread = read(new_socket, buffer, 1024);
-	printf("Client: "); 
-	printf("%s\n", buffer);
-	send(new_socket, hello, strlen(hello), 0);
+    while (strcmp(buffer, "exit\n") != 0) {
+		valread = read(new_socket, buffer, 1024);
+		printf("Client: "); 
+		printf("%s\n", buffer);
+		send(new_socket, hello, strlen(hello), 0);
 
+		if (buffer == NULL){
+			printf("Invalid response from server\n"); 
+			return 2; 
+		}
+
+	}
 	// closing the connected socket
 	close(new_socket);
 	// closing the listening socket

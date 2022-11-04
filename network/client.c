@@ -37,11 +37,32 @@ int main(int argc, char const* argv[])
 		printf("\nConnection Failed \n");
 		return -1;
 	}
-	send(sock, hello, strlen(hello), 0); //send here is equivalent to write
-	printf("Hello message sent\n");
-	valread = read(sock, buffer, 1024); //we read the response on the socket. 
-	printf("%s\n", buffer);
 
+	int SIZE = 200; 
+	char line[SIZE];
+	printf("Please enter your message to server...\n"); 
+    fgets(line, SIZE, stdin);
+    while (strcmp(line, "exit\n") != 0) {
+        printf("message: %s\n", line); 
+		send(sock, line, strlen(hello), 0); //send here is equivalent to write
+		valread = read(sock, buffer, 1024); //we read the response on the socket. 
+		printf("%s\n", buffer);
+
+        
+        if (line == NULL){
+            printf("Invalid message \n"); //if our query is invalid, go to next iteration to get new query
+            return 1; 
+        }
+
+		if (buffer == NULL){
+			printf("Invalid response from server\n"); 
+			return 2; 
+		}
+		printf("Please enter your message to server...\n");
+        fgets(line, SIZE, stdin);
+        
+    }
+	send(sock, line, strlen(hello), 0); //send here is equivalent to write
 	// closing the connected socket
 	close(client_fd);
 	return 0;
