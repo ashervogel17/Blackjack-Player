@@ -41,7 +41,6 @@ typedef struct card {
   char *rank; //  tracks the name of the card ex: "J" (Jack), "Q" (Queen), "2" (two), "A" (Ace)
 } card_t;
 
-
 typedef struct hand {
   card_t *currentHand; // array of pointers with size = MAX_CARDS_IN_A_HAND to card_t type 
   int valueOfhand;  //  value of hand; computed by the handCalculate fxn 
@@ -234,6 +233,21 @@ card_t* cardNew(counters_t *valCount, counters_t *suitCount, counters_t *rankCou
 }
 
 
+
+/**************** handNew() ****************/
+hand_t *handNew()
+{
+  //  1.  allocate space for the hand datastructure 
+  hand_t *newHand = malloc(sizeof(hand_t));
+  mem_assert(newHand, "failed to allocate space for hand\n");
+  
+    //  defensive programming 
+    if (newHand ==  NULL) {
+      fprintf(stderr, "failed to successfully create hand data structure\n");
+      return NULL;
+    }
+    return(newHand);
+}
 /**************** main() for testing ****************/
 
 int main(int argc, char *argv[]) {
@@ -256,13 +270,9 @@ int main(int argc, char *argv[]) {
   fprintf(stdout, "Rank = %s\n", newCard->rank);
 
 
-  //  create a card
-  card_t *newwCard = cardNew(valCount, suitCount, rankCount);
-
-  fprintf(stdout, "Value = %d\n", newwCard->value);
-  fprintf(stdout, "Suit = %s\n", newwCard->suit);
-  fprintf(stdout, "Rank = %s\n", newwCard->rank);
-
+  // create a hand 
+  //  a hand is an array of pointers to cards
+  hand_t *handyTime = handNew();
   return 0;
 }
 
