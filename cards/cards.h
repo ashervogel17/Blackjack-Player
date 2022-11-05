@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "../../libcs50/counters.h"
 
 /**************** global types ****************/
 typedef struct card card_t;  // card; opaque to users of the module
@@ -33,7 +34,7 @@ typedef struct hand hand_t; //  hand; opaque to users of the module
  * Caller is responsible for:
  *   later freeing allocated space for the card via cardDelete()
  */
-card_t* cardNew();
+card_t* cardNew(counters_t *valCount, counters_t *suitCount, counters_t *rankCount);
 
 /**************** bag_insert ****************/
 /* Add new item to the bag.
@@ -46,7 +47,7 @@ card_t* cardNew();
  * Caller is responsible for:
  *   not free-ing the item as long as it remains in the bag.
  */
-void bag_insert(bag_t* bag, void* item);
+// void bag_insert(bag_t* bag, void* item);
 
 /**************** bag_extract ****************/
 /* Return any data item from the bag.
@@ -62,7 +63,7 @@ void bag_insert(bag_t* bag, void* item);
  * Note:
  *   the order in which items are removed from the bag is undefined.
  */
-void* bag_extract(bag_t* bag);
+// void* bag_extract(bag_t* bag);
 
 /**************** bag_print ****************/
 /* Print the whole bag. 
@@ -75,8 +76,8 @@ void* bag_extract(bag_t* bag);
  * We print: 
  *   A comma-separated list of items, surrounded by {brackets}.
  */
-void bag_print(bag_t* bag, FILE* fp, 
-               void (*itemprint)(FILE* fp, void* item));
+// void bag_print(bag_t* bag, FILE* fp, 
+//                void (*itemprint)(FILE* fp, void* item));
 
 /**************** bag_iterate ****************/
 /* Iterate over the whole bag.
@@ -91,8 +92,8 @@ void bag_print(bag_t* bag, FILE* fp,
  *   the order in which bag items are handled is undefined.
  *   the bag is unchanged by this operation.
  */
-void bag_iterate(bag_t* bag, void* arg,
-                 void (*itemfunc)(void* arg, void* item) );
+// void bag_iterate(bag_t* bag, void* arg,
+//                  void (*itemfunc)(void* arg, void* item) );
 
 /**************** bag_delete ****************/
 /* Delete the whole bag.
@@ -106,6 +107,6 @@ void bag_iterate(bag_t* bag, void* arg,
  * Notes:
  *   the order in which items are deleted is undefined.
  */
-void bag_delete(bag_t* bag, void (*itemdelete)(void* item) );
+// void bag_delete(bag_t* bag, void (*itemdelete)(void* item) );
 
 #endif // __BAG_H
