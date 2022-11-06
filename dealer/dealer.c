@@ -10,8 +10,10 @@
 #include <string.h>
 #include <time.h>
 #include "/thayerfs/home/f0055pp/cs50/labs/tse-rorydoyle/libcs50/counters.h"
-#include "../dealer/cards.h"
+#include "/thayerfs/home/f0055pp/cs50/labs/tse-rorydoyle/libcs50/counters.h"
+#include "cards.h"
 
+/********CONSTANT VARIBALES - taken from cards.c from Nate*/
 const int CARDS_IN_DECK = 52;
 const int MAX_CARDS_IN_A_HAND = 22; // draw all aces at ace value = 1 and hit again to bust with 22 card hand
 
@@ -34,38 +36,52 @@ const int RANK_COUNTER_ID = 3;
 deck_t* createDeck(); 
 void deleteDeck(deck_t* deck); 
 void shuffleDeck(deck_t* deck); 
+player_t* newPlayer(); 
+bool dealCard(player_t* player, deck_t* deck, bool faceUp); 
+void calculateHandValue(player_t* player); 
+int getDeckSize(deck_t* deck); 
+bool isShuffled(deck_t* deck); 
+int getHandSize(player_t* player);
+int getValueOfHand(player_t* player);  
 
 
 /*****************local types*********************/
+
+/* deck_t - stores the deck of cards as an array of pointers to cards. */
 typedef struct deck {
     int numberOfCards; 
     bool shuffled; 
     card_t** cards; 
 } deck_t; 
 
+/* player_t - stores the hand as an array of pointers to cards. */
 typedef struct player {
-    hand_t* hand; 
-    card_t** cards; 
-    int valueOfHand; 
+    card_t** hand; 
+    int valueOfHand;
+    int numberOfCards;  
 } player_t; 
 
-int main(const int argc, char* argv[]) {
-
-    if (argc != 1) {
-        fprintf(stderr, "usage: \n", argv[0]); 
-        exit(1); 
-    }
-
-    player_t* player; 
-    player_t* dealer; 
-    
-    deck_t* deck = createDeck(); 
-    deleteDeck(deck); 
-
-    return 0;
-
+/* getDeckSize - getter for size of deck */
+int getDeckSize(deck_t* deck) {
+    return deck -> numberOfCards; 
 }
 
+/* isShuffled - getter for whether deck is shuffled */
+bool isShuffled(deck_t* deck) {
+    return deck -> shuffled; 
+}
+
+/* getHandSize - getter for number of cards player has */
+int getHandSize(player_t* player) {
+    return player -> numberOfCards; 
+}
+
+/* getValueOfHand - getter for value of a player's hand */
+int getValueOfHand(player_t* player) {
+    return player -> valueOfHand; 
+}
+
+/* createDeck - creates a deck and an array of pointers to cards */
 deck_t* createDeck() {
     
     deck_t* deck = malloc(sizeof(deck_t)); 
@@ -107,6 +123,7 @@ deck_t* createDeck() {
     return deck; 
 }
 
+/* deleteDeck - delete deck and allocated data stored in it */
 void deleteDeck(deck_t* deck) {
 
     for (int i = 0; i < CARDS_IN_DECK; i++) {
@@ -118,6 +135,8 @@ void deleteDeck(deck_t* deck) {
     free(deck); 
 }
 
+/* shuffleDeck - shuffles deck
+* note - implements Fisher-Yates algorithm for generating random permutations based on pseudocode found online */
 void shuffleDeck(deck_t* deck) {
 
     srand(time(NULL)); 
@@ -137,3 +156,95 @@ void shuffleDeck(deck_t* deck) {
 
     deck -> shuffled = true; 
 }
+
+/* newPlayer - create a new player and an array of card pointers for their hand */
+player_t* newPlayer() {
+
+    player_t* player = malloc(sizeof(player_t)); 
+
+    if (player == NULL) {
+        fprintf(stderr, "Error creating player.\n"); 
+        exit(1); 
+    }
+
+    card_t* cards [MAX_CARDS_IN_A_HAND]; 
+    player -> hand = cards; 
+
+    player -> numberOfCards = 0; 
+    player -> valueOfHand = 0; 
+
+    return player; 
+}
+
+/* dealCard - deals a card from the deck to a player */
+bool dealCard(player_t* player, deck_t* deck, bool faceUp) {
+
+    if (player == NULL || deck == NULL || player -> hand == NULL) {
+        return false; 
+    }
+
+    if (deck -> shuffled == false) {
+        return false; 
+    }
+
+    if (deck -> numberOfCards == 0) {
+        return false; 
+    }
+
+    int sizeOfDeck = deck -> numberOfCards; 
+    card_t* card; 
+
+    card = deck -> cards[sizeOfDeck - 1]; 
+    deck -> numberOfCards--; 
+
+    player -> hand[player -> numberOfCards] = card; 
+    player -> numberOfCards++; 
+
+    calculateHandValue(player); 
+     
+    if (faceUp) {
+        //communicate value over the server
+    }
+
+    return true; 
+}
+
+/* calculateHandValue - calculates the hand value for a player */
+void calculateHandValue(player_t* player) {
+
+    for (int i = 0; i < player -> numberOfCards; i++) { 
+        int currentCardValue = getRank(player -> hand[i]);
+        player -> valueOfHand += currentCardValue;  
+    }
+}
+
+
+int main(const int argc, char* argv[]) {
+
+    if (argc != 1) {
+        fprintf(stderr, "usage: \n", argv[0]); 
+        exit(1); 
+    }
+
+    player_t* player; 
+    player_t* dealer; 
+    
+    deck_t* deck = createDeck(); 
+
+    if (deck == NULL) {
+        fprintf(stderr, "Error making deck.\n");
+        return 1;
+    }
+
+    shuffleDeck(deck); 
+
+
+
+    return 0;
+
+}
+
+
+
+
+    
