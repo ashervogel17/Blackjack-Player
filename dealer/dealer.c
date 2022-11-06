@@ -9,32 +9,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
-#include "/thayerfs/home/f0055pp/cs50/labs/tse-rorydoyle/libcs50/counters.h"
-#include "../dealer/cards.h"
-
-const int CARDS_IN_DECK = 52;
-const int MAX_CARDS_IN_A_HAND = 22; // draw all aces at ace value = 1 and hit again to bust with 22 card hand
-
-//  CARD VALUE INFO
-const int MAX_CARD_VALUE = 11;  //  maximum card value is 11 (corresponding to an ace of value = 11)
-const int MIN_CARD_VALUE = 2;   //  corresponding to a 2 (Ace = 1 is a special case not considered here)
-
-//  CARD RANK INFO
-const int MAX_CARD_RANK = 12;   // maximum "rank" index integer corresponding to the value of an Ace
-const int MIN_CARD_RANK = 1;    // smallest index corresponding to a card is 2 for the "2" card
-//  CARD SUIT INFO
-const int NUM_SUITS = 4;  //  number of suits
-
-//  counters_t key IDs for value, suit, rank (will be the keys for corresponding counters_t * nodes containing count information needed to generate new cards)
-const int VAL_COUNTER_ID = 1; 
-const int SUIT_COUNTER_ID = 2; 
-const int RANK_COUNTER_ID = 3; 
-
-/*************function prototypes*****************/
-deck_t* createDeck(); 
-void deleteDeck(deck_t* deck); 
-void shuffleDeck(deck_t* deck); 
-
+#include "../cards/cards.h"
 
 /*****************local types*********************/
 typedef struct deck {
@@ -49,26 +24,16 @@ typedef struct player {
     int valueOfHand; 
 } player_t; 
 
-int main(const int argc, char* argv[]) {
+/*************function prototypes*****************/
+deck_t* createDeck(); 
+void deleteDeck(deck_t* deck); 
+void shuffleDeck(deck_t* deck); 
 
-    if (argc != 1) {
-        fprintf(stderr, "usage: \n", argv[0]); 
-        exit(1); 
-    }
-
-    player_t* player; 
-    player_t* dealer; 
-    
-    deck_t* deck = createDeck(); 
-    deleteDeck(deck); 
-
-    return 0;
-
-}
+/******FXN DEFINITIONS*******/
 
 deck_t* createDeck() {
     
-    deck_t* deck = malloc(sizeof(deck_t)); 
+    deck_t* deck = malloc(sizeof(deck_t)); // allocate memory for the deck
     
     counters_t* valCount = counters_new(); 
     counters_t* suitCount = counters_new(); 
@@ -136,4 +101,22 @@ void shuffleDeck(deck_t* deck) {
     }
 
     deck -> shuffled = true; 
+}
+
+
+int main(const int argc, char* argv[]) {
+
+    if (argc != 1) {
+        fprintf(stderr, "usage: %s \n", argv[0]); 
+        exit(1); 
+    }
+
+    player_t* player; 
+    player_t* dealer; 
+    
+    deck_t* deck = createDeck(); 
+    deleteDeck(deck); 
+
+    return 0;
+
 }
