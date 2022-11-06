@@ -42,7 +42,7 @@ typedef struct card {
 } card_t;
 
 typedef struct hand {
-  card_t *currentHand; // array of pointers with size = MAX_CARDS_IN_A_HAND to card_t type 
+  card_t **currentHand; // array of pointers with size = MAX_CARDS_IN_A_HAND to card_t type 
   int valueOfhand;  //  value of hand; computed by the handCalculate fxn 
 } hand_t;
 
@@ -162,6 +162,9 @@ char *rankChoose(int rankCount)
   }
   return(returnRank);
 }
+//  createDeck fxn
+// initializes counters of
+//  creates an array of pointers to type cards_t
 
 /**************** global function bodies ****************/
 
@@ -258,21 +261,13 @@ int main(int argc, char *argv[]) {
   counters_t *rankCount = counters_new();
 
   // add relevant counters keys for value, suit, and rank
-  int counterValue = counters_add(valCount, VAL_COUNTER_ID);
-  int counterSuit = counters_add(suitCount, SUIT_COUNTER_ID);
-  int counterRank = counters_add(rankCount, RANK_COUNTER_ID);
+  counters_add(valCount, VAL_COUNTER_ID);
+  counters_add(suitCount, SUIT_COUNTER_ID);
+  counters_add(rankCount, RANK_COUNTER_ID);
   
   //  create a card
   card_t *newCard = cardNew(valCount, suitCount, rankCount);
 
-  fprintf(stdout, "Value = %d\n", newCard->value);
-  fprintf(stdout, "Suit = %s\n", newCard->suit);
-  fprintf(stdout, "Rank = %s\n", newCard->rank);
-
-
-  // create a hand 
-  //  a hand is an array of pointers to cards
-  hand_t *handyTime = handNew();
   return 0;
 }
 
