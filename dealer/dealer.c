@@ -28,6 +28,7 @@ typedef struct player {
 deck_t* createDeck(); 
 void deleteDeck(deck_t* deck); 
 void shuffleDeck(deck_t* deck); 
+hand_t *addCardToHand(deck_t *deck, hand_t* hand, int *handIndex);
 
 /******FXN DEFINITIONS*******/
 
@@ -101,6 +102,30 @@ void shuffleDeck(deck_t* deck) {
     }
 
     deck -> shuffled = true; 
+}
+
+/*****addCardToHand()*****/
+// the following function will pop a card from the deck and add it to the current players hand 
+hand_t *addCardToHand(deck_t *deck, hand_t *hand, int *handIndex)
+{
+    //  1. pop a card from the deck and insert it into the hand
+        
+        //  defensive deck + hand check
+            if (deck == NULL)   {
+                fprintf(stdout, "deck is empty; failed to add card to hand\n");
+                return NULL;
+            }
+
+            if (hand == NULL)   {
+                fprintf(stdout, "hand is empty; failed to add card to hand\n");
+                return NULL;
+            }
+        //  pop card from 0th entry of the deck
+        
+    
+
+
+
 }
 
 

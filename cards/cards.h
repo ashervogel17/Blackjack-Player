@@ -23,6 +23,27 @@
 typedef struct card card_t;  // card; opaque to users of the module
 typedef struct hand hand_t; //  hand; opaque to users of the module 
 
+/**************** file-local global variables ****************/
+/* none */
+
+//  DECK INFO
+#define CARDS_IN_DECK 52
+#define MAX_CARDS_IN_A_HAND 22 // draw all aces at ace value = 1 and hit again to bust with 22 card hand
+
+//  CARD VALUE INFO
+#define MAX_CARD_VALUE 11  //  maximum card value is 11 (corresponding to an ace of value = 11)
+#define MIN_CARD_VALUE 2   //  corresponding to a 2 (Ace = 1 is a special case not considered here)
+
+//  CARD RANK INFO
+#define MAX_CARD_RANK 12   // maximum "rank" index integer corresponding to the value of an Ace
+#define MIN_CARD_RANK 1    // smallest index corresponding to a card is 2 for the "2" card
+//  CARD SUIT INFO
+#define NUM_SUITS 4  //  number of suits
+
+//  counters_t key IDs for value, suit, rank (will be the keys for corresponding counters_t * nodes containing count information needed to generate new cards)
+#define VAL_COUNTER_ID 1 
+#define SUIT_COUNTER_ID 2 
+#define RANK_COUNTER_ID 3 
 /**************** functions ****************/
 
 /**************** cardNew()****************/
