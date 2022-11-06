@@ -9,13 +9,13 @@
 #MISC. TEST CASES FOR FXNS
 #TESTING=-DAPPTEST
 L = ../../libcs50
-LIBS = $L/libcs50.a ../cards/cards.h
+LIBS = $L/libcs50.a
 CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I$L
 CC = gcc
 PROG = dealer
 MAKE = make
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
-OBJS = dealer.o 
+OBJS = dealer.o ../cards/cards.o
 
 .PHONY: all clean 
 
@@ -28,6 +28,7 @@ $(PROG): $(OBJS) $(LIBS)
 # object files depend on header files
 
 dealer.o: dealer.c
+../cards/cards.o: ../cards/cards.c
 
 clean: 
 	rm -f $(PROG)

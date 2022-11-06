@@ -115,7 +115,7 @@ int main(const int argc, char* argv[]) {
     player_t* dealer; 
     
     deck_t* deck = createDeck(); 
-    deleteDeck(deck); 
+    // deleteDeck(deck); 
 
     return 0;
 
