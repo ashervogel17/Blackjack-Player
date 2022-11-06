@@ -267,7 +267,6 @@ int main(int argc, char *argv[]) {
   
   //  create a card
   card_t *newCard = cardNew(valCount, suitCount, rankCount);
-
   return 0;
 }
 
