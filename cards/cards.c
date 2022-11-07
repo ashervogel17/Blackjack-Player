@@ -15,7 +15,7 @@
 
 /**************** global types ****************/
 typedef struct card {
-  int value;  //  value of the card 0-12 (ace can be valued @ 1 or @ 11)
+  int value;  //  value of the card 2-11 (ace can be valued @ 2 or @ 11)
   char *suit; //  tracks the suit "C" (Clubs), "D" (Diamonds), "H" (Hearts), "S" (Spades)
   char *rank; //  tracks the name of the card ex: "J" (Jack), "Q" (Queen), "2" (two), "A" (Ace)
 } card_t;
@@ -33,8 +33,8 @@ typedef struct deck {
 } deck_t; 
 /**************** local function prototypes ****************/
 /* not visible outside this file */
-char *suitChoose(int suitCount);
-char *rankChoose(int rankCount);
+static char *suitChoose(int suitCount);
+static char *rankChoose(int rankCount);
 
 
 /**************** local function bodies ****************/
@@ -50,7 +50,7 @@ char *rankChoose(int rankCount);
 //   4 = "S" (Spades)
 
 // caller must later free character
-char *suitChoose(int suitCount) 
+static char *suitChoose(int suitCount) 
 {
   char *returnSuit = NULL;  //  string to return 
   returnSuit = malloc(sizeof(char)*2);  // locally malloc a char
@@ -96,10 +96,10 @@ char *suitChoose(int suitCount)
 //   13 = "A" (Ace)
 
 // caller must later free character
-char *rankChoose(int rankCount) 
+static char *rankChoose(int rankCount) 
 {
   char* returnRank = NULL;  //  string to return 
-  returnRank = malloc(sizeof(char)*2);  // locally malloc a char
+  returnRank = malloc(sizeof(char)*4);  // locally malloc a char
   //  defensive check
   if (returnRank == NULL) {
     fprintf(stderr, "failed to assign a suit\n");
@@ -193,13 +193,19 @@ char* cardGetRank (card_t* card) {
 
 
 /* createDeck - creates a deck and an array of pointers to cards */
-deck_t* createDeck() {
+deck_t* deckNew() {
     
-    deck_t* deck; 
-    
-    counters_t* valCount = counters_new(); 
-    counters_t* suitCount = counters_new(); 
-    counters_t* rankCount = counters_new(); 
+    deck_t* deck = malloc(sizeof(deck_t));  // allocate m 
+  
+  //  initialize counters objects to be passed to cardNew()
+  counters_t *valCount = NULL;
+  counters_t *suitCount = NULL;
+  counters_t *rankCount = NULL;
+
+  //  initialize the counters
+  counters_set(valCount, VAL_COUNTER_ID, 2);  // initialize the valCount to 2 (minimum card value for card = 2)
+  counters_set(suitCount, SUIT_COUNTER_ID, 1);
+  counters_set(rankCount, RANK_COUNTER_ID, 1);
 
     if (valCount == NULL || suitCount == NULL || rankCount == NULL) {
         fprintf(stderr, "Error creating counters.\n"); 
@@ -246,7 +252,7 @@ void cardDelete (card_t* card) {
 
 
 /* deleteDeck - delete deck and allocated data stored in it */
-void deleteDeck(deck_t* deck) {
+void deckDelete(deck_t* deck) {
 
     for (int i = 0; i < CARDS_IN_DECK; i++) {
         if (deck -> cards[i] != NULL) {
@@ -259,7 +265,7 @@ void deleteDeck(deck_t* deck) {
 
 /* shuffleDeck - shuffles deck
 * note - implements Fisher-Yates algorithm for generating random permutations based on pseudocode found online */
-void shuffleDeck(deck_t* deck) {
+void deckShuffle(deck_t* deck) {
 
     srand(time(NULL)); 
     
@@ -280,7 +286,7 @@ void shuffleDeck(deck_t* deck) {
 }
 
 /* newPlayer - create a new player and an array of card pointers for their hand */
-hand_t* newHand() {
+hand_t* handNew() {
 
     hand_t* hand = malloc(sizeof(hand_t)); 
 
@@ -299,7 +305,7 @@ hand_t* newHand() {
 }
 
 /* dealCard - deals a card from the deck to a player */
-card_t* dealRandomCard(deck_t* deck) {
+card_t* deckDealRandomCard(deck_t* deck) {
 
     if (deck == NULL) {
         fprintf(stderr, "Error with parameters.\n"); 
@@ -326,7 +332,7 @@ card_t* dealRandomCard(deck_t* deck) {
 }
 
 /* ASHER ALWAYS SET FACEUP TO FALSE! OTHERWISE YOUR CODE WILL TRY TO SEND A MESSAGE OVER THE SERVER */
-bool addCardToHand (hand_t* hand, card_t* card, bool faceUp) {
+bool handAddCard (hand_t* hand, card_t* card, bool faceUp) {
     
     if (hand == NULL || card == NULL) {
         return false; 
@@ -335,7 +341,7 @@ bool addCardToHand (hand_t* hand, card_t* card, bool faceUp) {
     hand -> cards[hand -> numberOfCards] = card; 
     hand -> numberOfCards++; 
 
-    calculateHandValue(hand); 
+    handCalculateValue(hand); 
      
     if (faceUp) {
         //communicate value over the server
@@ -346,7 +352,7 @@ bool addCardToHand (hand_t* hand, card_t* card, bool faceUp) {
 
 
 /* calculateHandValue - calculates the hand value for a player */
-void calculateHandValue(hand_t* hand) {
+void handCalculateValue(hand_t* hand) {
     
     int handValue = 0;
     int numAces = 0;
@@ -372,6 +378,40 @@ void handDelete (hand_t* hand) {
     }
 
     free(hand); 
+}
+
+
+char* handSortedString(hand_t* hand) {
+  if (hand == NULL) {
+    return NULL;
+  }
+  bool added[hand->numberOfCards];
+  for (int i=0; i < hand->numberOfCards; i++) {
+    added[i] = false;
+  }
+  char* res = calloc(7*hand->numberOfCards, sizeof(char));
+  for (int i=0; i < hand->numberOfCards; i++) {
+    char* nextCard = calloc(7, sizeof(char));
+    int nextCardVal = 20;
+    int nextCardIndex = 0;
+    for (int j=0; j < hand->numberOfCards; j++) {
+      if (added[j]) {
+        continue;
+      }
+      if (hand->cards[j]->value < nextCardVal) {
+        nextCardVal = hand->cards[j]->value;
+        strcpy(nextCard, hand->cards[j]->rank);
+        nextCardIndex = j;
+      }
+    }
+    strcat(res, nextCard);
+    if (i < hand->numberOfCards - 1) {
+      strcat(res, " ");
+    }
+    added[nextCardIndex] = true;
+    free(nextCard);
+  }
+  return res;
 }
 
 /*******************cardParse()*******************/
@@ -478,70 +518,70 @@ card_t *cardParse(char *cardString)
     rankCount = 1; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 0; 
+    cardFromString->value = 2; 
   }
 
   if (!strcpy(rankUnFixed, "Three"))  {
     rankCount = 2; // set the index for the rankt; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 1; 
+    cardFromString->value = 3; 
   }
 
   if (!strcpy(rankUnFixed, "Four"))  {
     rankCount = 3; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 2; 
+    cardFromString->value = 4; 
   }
 
   if (!strcpy(rankUnFixed, "Five"))  {
     rankCount = 4; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 3; 
+    cardFromString->value = 5; 
   }
 
   if (!strcpy(rankUnFixed, "Six"))  {
     rankCount = 5; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 4; 
+    cardFromString->value = 6; 
   }
 
   if (!strcpy(rankUnFixed, "Seven"))  {
     rankCount = 6; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 5; 
+    cardFromString->value = 7; 
   }
 
   if (!strcpy(rankUnFixed, "Eight"))  {
     rankCount = 7; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 6; 
+    cardFromString->value = 8; 
   }
 
   if (!strcpy(rankUnFixed, "Nine"))  {
     rankCount = 8; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 7; 
+    cardFromString->value = 9; 
   }
 
   if (!strcpy(rankUnFixed, "Ten"))  {
     rankCount = 9; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 8; 
+    cardFromString->value = 10; 
   }
 
   if (!strcpy(rankUnFixed, "Jack"))  {
     rankCount = 10; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 9; 
+    cardFromString->value = 10; 
   }
 
   if (!strcpy(rankUnFixed, "Queen"))  {
@@ -555,14 +595,14 @@ card_t *cardParse(char *cardString)
     rankCount = 12; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 11; 
+    cardFromString->value = 10; 
   }
 
   if (!strcpy(rankUnFixed, "Ace"))  {
     rankCount = 12; // set the index for the rank; to ensure proper function of suitChoose fxn
     rankFixed = rankChoose(rankCount); // get the suit 
     strcpy(cardFromString->rank,rankFixed); // add the rank to the card
-    cardFromString->value = 12; 
+    cardFromString->value = 11; 
   }
 
   return (cardFromString);
@@ -590,7 +630,7 @@ card_t* cardNew(counters_t *valCount, counters_t *suitCount, counters_t *rankCou
   fprintf(stdout, "cardNew(), countValue = %d\n", countValue);
   if (countValue == MAX_CARD_VALUE) {
     returnCard->value = countValue; //  populate card value 
-    rslt = counters_set(valCount, VAL_COUNTER_ID, 1); // reset card suit index 
+    rslt = counters_set(valCount, VAL_COUNTER_ID, MIN_CARD_VALUE); // reset card suit index 
     if (rslt == false)  {
       fprintf(stdout, "issue resettting valueCount\n");
       return NULL;
@@ -639,19 +679,24 @@ card_t* cardNew(counters_t *valCount, counters_t *suitCount, counters_t *rankCou
 int main(int argc, char *argv[]) {
   
   //  initialize counters objects to be passed to cardNew()
-  counters_t *valCount = counters_new();
-  counters_t *suitCount = counters_new();
-  counters_t *rankCount = counters_new();
+  counters_t *valCount = NULL;
+  counters_t *suitCount = NULL;
+  counters_t *rankCount = NULL;
 
-  // add relevant counters keys for value, suit, and rank
-  counters_add(valCount, VAL_COUNTER_ID);
-  counters_add(suitCount, SUIT_COUNTER_ID);
-  counters_add(rankCount, RANK_COUNTER_ID);
+  //  initialize the counters
+  counters_set(valCount, VAL_COUNTER_ID, 2);  // initialize the valCount to 2 (minimum card value for card = 2)
+  counters_set(suitCount, SUIT_COUNTER_ID, 1);
+  counters_set(rankCount, RANK_COUNTER_ID, 1);
+
+  // set
+  // // add relevant counters keys for value, suit, and rank
+  // counters_add(valCount, VAL_COUNTER_ID);
+  // counters_add(suitCount, SUIT_COUNTER_ID);
+  // counters_add(rankCount, RANK_COUNTER_ID);
   
   //  create a card
-  card_t *newCard = cardNew(valCount, suitCount, rankCount);
+  // card_t *newCard = cardNew(valCount, suitCount, rankCount);
 
-  hand_t *newHand = handNew();
   return 0;
 }
 
