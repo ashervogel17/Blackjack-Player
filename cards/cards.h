@@ -16,13 +16,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 #include "../../libcs50/counters.h"
 #include "../../libcs50/mem.h"
 
 /**************** global types ****************/
 typedef struct card card_t;  // card; opaque to users of the module
 typedef struct hand hand_t; //  hand; opaque to users of the module 
-
+typedef struct deck deck_t;  // stores the deck of cards as an array of pointers to cards
 /**************** file-local global variables ****************/
 /* none */
 
@@ -72,19 +73,31 @@ card_t* cardNew(counters_t *valCount, counters_t *suitCount, counters_t *rankCou
  * caller is responsible for later freeing the memory for the created card
  * 
  */
-hand_t* handNew();
+card_t* cardParse(char *cardString);
 
+/*deck methods*/
+int deckGetNumberOfCards (deck_t* deck);
+bool deckIsShuffled (deck_t* deck); 
+card_t** deckGetCards (deck_t* deck); 
+deck_t* createDeck(); 
+void deleteDeck(deck_t* deck); 
+void shuffleDeck(deck_t* deck);
 
-/**************** handNew()****************/
-/* Create a new hand structure .
- *
- * We return:
- *   a pointer to a new "hand" structure .
- * We guarantee:
- *   The hand is empty when initialized
- * Caller is responsible for:
- *   later freeing allocated space for the hand via handDelete()
- */
-hand_t* handNew();
+/*hand methods*/
+card_t** handGetCards (hand_t* hand); 
+int handGetValueOfHand(hand_t* hand);
+int handGetNumberOfCards (hand_t* hand);
+hand_t* newHand(); 
+bool addCardToHand (hand_t* hand, card_t* card, bool faceUp);
+void calculateHandValue(hand_t* hand); 
+void handDelete (hand_t* hand);  
+
+/*card methods*/
+int cardGetValue (card_t* card);
+char* cardGetSuit (card_t* card); 
+char* cardGetRank (card_t* card);
+void cardDelete (card_t* card); 
+card_t* dealRandomCard(deck_t* deck);
+
 
 #endif // __BAG_H
