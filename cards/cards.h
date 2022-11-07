@@ -79,17 +79,18 @@ card_t* cardParse(char *cardString);
 int deckGetNumberOfCards (deck_t* deck);
 bool deckIsShuffled (deck_t* deck); 
 card_t** deckGetCards (deck_t* deck); 
-deck_t* createDeck(); 
-void deleteDeck(deck_t* deck); 
-void shuffleDeck(deck_t* deck);
+deck_t* deckNew(); 
+void deckDelete(deck_t* deck); 
+void deckShuffle(deck_t* deck);
 
 /*hand methods*/
 card_t** handGetCards (hand_t* hand); 
 int handGetValueOfHand(hand_t* hand);
 int handGetNumberOfCards (hand_t* hand);
-hand_t* newHand(); 
-bool addCardToHand (hand_t* hand, card_t* card, bool faceUp);
-void calculateHandValue(hand_t* hand); 
+char* handSortedString(hand_t* hand);
+hand_t* handNew(); 
+bool handAddcard (hand_t* hand, card_t* card, bool faceUp);
+void handCalculateValue(hand_t* hand); 
 void handDelete (hand_t* hand);  
 
 /*card methods*/
@@ -97,7 +98,7 @@ int cardGetValue (card_t* card);
 char* cardGetSuit (card_t* card); 
 char* cardGetRank (card_t* card);
 void cardDelete (card_t* card); 
-card_t* dealRandomCard(deck_t* deck);
+card_t* deckDealRandomCard(deck_t* deck);
 
 
 #endif // __BAG_H
