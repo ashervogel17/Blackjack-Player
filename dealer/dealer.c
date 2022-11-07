@@ -58,32 +58,33 @@ typedef struct card {
 
 /*************function prototypes*****************/
 
-/*getters for deck*/
+/*deck methods*/
 int deckGetNumberOfCards (deck_t* deck);
 bool deckIsShuffled (deck_t* deck); 
 card_t** deckGetCards (deck_t* deck); 
+deck_t* createDeck(); 
+void deleteDeck(deck_t* deck); 
+void shuffleDeck(deck_t* deck);
 
-/*getters for hand*/
+/*hand methods*/
 card_t** handGetCards (hand_t* hand); 
 int handGetValueOfHand(hand_t* hand);
 int handGetNumberOfCards (hand_t* hand);
+hand_t* newHand(); 
+bool addCardToHand (hand_t* hand, card_t* card, bool faceUp);
+void calculateHandValue(hand_t* hand); 
+void handDelete (hand_t* hand);  
 
-/*getters for card*/
+/*card methods*/
 int cardGetValue (card_t* card);
 char* cardGetSuit (card_t* card); 
 char* cardGetRank (card_t* card);
-
-/*other methods*/
-deck_t* createDeck(); 
-void deleteDeck(deck_t* deck); 
-void shuffleDeck(deck_t* deck); 
-hand_t* newHand(); 
-card_t* dealRandomCard(deck_t* deck); 
-bool addCardToHand (hand_t* hand, card_t* card, bool faceUp); 
-void calculateHandValue(hand_t* hand); 
+void cardDelete (card_t* card); 
+card_t* dealRandomCard(deck_t* deck);
 
 
 
+/****************************FUNCTIONS********************/
 int deckGetNumberOfCards (deck_t* deck) { 
     return deck -> numberOfCards; 
 }
@@ -162,6 +163,17 @@ deck_t* createDeck() {
 
     return deck; 
 }
+
+
+void cardDelete (card_t* card) {
+    
+    if (card != NULL) {
+        free(card -> suit); 
+        free(card -> rank); 
+        free(card);
+    }  
+}
+
 
 /* deleteDeck - delete deck and allocated data stored in it */
 void deleteDeck(deck_t* deck) {
@@ -283,6 +295,14 @@ void calculateHandValue(hand_t* hand) {
     hand->valueOfHand = handValue;
 }
 
+void handDelete (hand_t* hand) {
+
+    for (int i = 0; i < hand -> numberOfCards; i++) {
+        cardDelete(hand -> cards[i]); 
+    }
+
+    free(hand); 
+}
 
 
 
