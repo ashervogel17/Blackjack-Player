@@ -79,11 +79,13 @@ char *suitChoose(int suitCount)
 //   the following function will take in the integer count associated with the rank counters_t object 
 //   and based on the count, choose a rank for a new card according to the following scheme based on the value of rankCount: 
 
-//   2 = "2" (Two)
+//   1 = "2" (Two)
 //   3 = "3" (Three)
 //  ....
 //   10 = "J" (Jack)
 //   11 = "Q" (Queen)
+//  ...
+//   13 = "A" (Ace)
 
 // caller must later free character
 char *rankChoose(int rankCount) 
@@ -123,15 +125,18 @@ char *rankChoose(int rankCount)
       strcpy(returnRank, "9");
       break;
     case 9:
-      strcpy(returnRank, "J");
+      strcpy(returnRank, "10");
       break;
     case 10:
-      strcpy(returnRank, "Q");
+      strcpy(returnRank, "J");
       break;
     case 11:
+      strcpy(returnRank, "Q");
+      break;
+    case 12:
       strcpy(returnRank, "K");
       break;
-    case 12: 
+    case 13: 
       strcpy(returnRank, "A");
       break;
     
@@ -140,12 +145,204 @@ char *rankChoose(int rankCount)
   }
   return(returnRank);
 }
-//  createDeck fxn
-// initializes counters of
-//  creates an array of pointers to type cards_t
 
 /**************** global function bodies ****************/
 
+
+
+/*******************cardParse()*******************/
+//  see cards.h for explanation
+card_t *cardParse(char *cardString)
+{
+  //  initialize vars
+  card_t *cardFromString; //  card structure to be returned ; caller responsible for later freeing()
+  char *cardStringCopy; //  copy of passed in card 
+  char *rankUnFixed;  //  rank; un-fixed to match correct card_t structure formatting
+  char *rankFixed;  // the fixed rank formatted according to the card_t structure (ex: "K" from 'unfixed' "King")
+  char *suitUnFixed;  //  suit; un-fixed to match correct card_t structure formatting
+  char *suitFixed;  // the fixed suit formatted according to the card_t structure (ex: "C" from 'unfixed "Clubs" )
+  
+  char *ofString; //  string to capture the "of" component of a card name (ex: Queen "of" Clubs)
+
+  int suitCount = 0; // for tracking the suit 
+  int rankCount = 0; // for tracking the rank
+
+  //  allocate space for cardString copy 
+  cardStringCopy = malloc(  sizeof(char) *  (strlen(cardString) + 1)  );  //  allocate space for string copy
+  //  defensive check
+  if (cardStringCopy == NULL) {
+    fprintf(stdout, "failed to allocate memory for copied cardString information\n");
+    return NULL;
+  }
+
+  //  copy cardString to cardStringCopy
+  bool stringCopySuccess = strncpy(cardStringCopy, cardString, (strlen(cardString) + 1);
+
+  //  defensive check
+  if (!stringCopySuccess) {
+    fprintf(stderr, "failed to copy cardString information\n");
+    return NULL; 
+  }
+
+  // allocate space for rank 
+  rankUnFixed = malloc(  sizeof(char) * MAX_SUIT_LETTERCOUNT );  //  allocate space for rank un-fixed
+  //  defensive check
+  if (rankUnFixed == NULL) {
+    fprintf(stdout, "failed to copy allocate space for Rank\n");
+    return NULL;
+  }
+
+  // allocate space for "of" string 
+  ofString = malloc(  sizeof(char) * MAX_SUIT_LETTERCOUNT );  //  allocate space for rank un-fixed
+  //  defensive check
+  if (ofString == NULL) {
+    fprintf(stdout, "failed to copy allocate space for 'of' string\n");
+    return NULL;
+  }
+
+  // allocate space for suit
+  suitUnFixed = malloc(  sizeof(char) * MAX_SUIT_LETTERCOUNT );  //  allocate space for rank un-fixed
+  //  defensive check
+  if (suitUnFixed == NULL) {
+    fprintf(stdout, "failed to copy allocate space for suit\n");
+    return NULL;
+  }
+
+  //  read and parse the string for desired contents 
+  int readStrings = sscanf(cardStringCopy, "%s %s %s", rankUnFixed, ofString, suitUnFixed);
+  if (readStrings != 3) {
+    fprintf(stderr, "failed to read rank, of, suit from cardstring\n");
+    return NULL;
+  }
+
+  // allocate memory for the added card 
+  cardFromString = malloc(sizeof(card_t));
+  if (cardFromString == NULL) {
+    fprintf(stderr, "failed to allocate memory for the card added for the read string\n");
+    return NULL;
+  }
+  
+  // fix the card suit
+  
+  if (!strcpy(suitUnFixed, "Clubs"))  {
+    suitCount = 1; // set the index for the suit; to ensure proper function of suitChoose fxn
+    suitFixed = suitChoose(suitCount); // get the suit 
+    strcpy(cardFromString->suit,suitFixed); // add the suit to the card
+  }
+
+  if (!strcpy(suitUnFixed, "Diamonds"))  {
+    suitCount = 2; // set the index for the suit; to ensure proper function of suitChoose fxn
+    suitFixed = suitChoose(suitCount); // get the suit 
+    strcpy(cardFromString->suit,suitFixed); // add the suit to the card
+  }
+
+  if (!strcpy(suitUnFixed, "Hearts"))  {
+    suitCount = 3; // set the index for the suit; to ensure proper function of suitChoose fxn
+    suitFixed = suitChoose(suitCount); // get the suit 
+    strcpy(cardFromString->suit,suitFixed); // add the suit to the card
+  }
+
+  if (!strcpy(suitUnFixed, "Spades"))  {
+    suitCount = 4; // set the index for the suit; to ensure proper function of suitChoose fxn
+    suitFixed = suitChoose(suitCount); // get the suit 
+    strcpy(cardFromString->suit,suitFixed); // add the suit to the card
+  }
+
+  // fix the card rank
+  
+  if (!strcpy(rankUnFixed, "Two"))  {
+    rankCount = 1; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 0; 
+  }
+
+  if (!strcpy(rankUnFixed, "Three"))  {
+    rankCount = 2; // set the index for the rankt; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 1; 
+  }
+
+  if (!strcpy(rankUnFixed, "Four"))  {
+    rankCount = 3; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 2; 
+  }
+
+  if (!strcpy(rankUnFixed, "Five"))  {
+    rankCount = 4; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 3; 
+  }
+
+  if (!strcpy(rankUnFixed, "Six"))  {
+    rankCount = 5; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 4; 
+  }
+
+  if (!strcpy(rankUnFixed, "Seven"))  {
+    rankCount = 6; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 5; 
+  }
+
+  if (!strcpy(rankUnFixed, "Eight"))  {
+    rankCount = 7; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 6; 
+  }
+
+  if (!strcpy(rankUnFixed, "Nine"))  {
+    rankCount = 8; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 7; 
+  }
+
+  if (!strcpy(rankUnFixed, "Ten"))  {
+    rankCount = 9; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 8; 
+  }
+
+  if (!strcpy(rankUnFixed, "Jack"))  {
+    rankCount = 10; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 9; 
+  }
+
+  if (!strcpy(rankUnFixed, "Queen"))  {
+    rankCount = 11; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 10; 
+  }
+
+  if (!strcpy(rankUnFixed, "King"))  {
+    rankCount = 12; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 11; 
+  }
+
+  if (!strcpy(rankUnFixed, "Ace"))  {
+    rankCount = 12; // set the index for the rank; to ensure proper function of suitChoose fxn
+    rankFixed = rankChoose(rankCount); // get the suit 
+    strcpy(cardFromString->rank,rankFixed); // add the rank to the card
+    cardFromString->value = 12; 
+  }
+
+  return (cardFromString);
+}
 /**************** cardNew() ****************/
 /* see cards.h for description */
 card_t* cardNew(counters_t *valCount, counters_t *suitCount, counters_t *rankCount)

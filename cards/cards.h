@@ -35,7 +35,7 @@ typedef struct hand hand_t; //  hand; opaque to users of the module
 #define MIN_CARD_VALUE 2   //  corresponding to a 2 (Ace = 1 is a special case not considered here)
 
 //  CARD RANK INFO
-#define MAX_CARD_RANK 12   // maximum "rank" index integer corresponding to the value of an Ace
+#define MAX_CARD_RANK 13   // maximum "rank" index integer corresponding to the value of an Ace
 #define MIN_CARD_RANK 1    // smallest index corresponding to a card is 2 for the "2" card
 //  CARD SUIT INFO
 #define NUM_SUITS 4  //  number of suits
@@ -44,6 +44,11 @@ typedef struct hand hand_t; //  hand; opaque to users of the module
 #define VAL_COUNTER_ID 1 
 #define SUIT_COUNTER_ID 2 
 #define RANK_COUNTER_ID 3 
+
+
+//  for cardParse 
+#define MAX_SUIT_LETTERCOUNT 20
+#define MAX_RANK_LETTERCOUNT 20
 /**************** functions ****************/
 
 /**************** cardNew()****************/
@@ -57,6 +62,17 @@ typedef struct hand hand_t; //  hand; opaque to users of the module
  *   later freeing allocated space for the card via cardDelete()
  */
 card_t* cardNew(counters_t *valCount, counters_t *suitCount, counters_t *rankCount);
+
+
+/**************** cardParse()****************/
+/* Create a new card from a passed in string.
+ * receive a string and from that string get the card data
+ * parse the string for 3 strings (format: Seven of Hearts, Ace of Diamonds)
+ * after parsing the string, allocate memory for a card structure
+ * caller is responsible for later freeing the memory for the created card
+ * 
+ */
+hand_t* handNew();
 
 
 /**************** handNew()****************/
