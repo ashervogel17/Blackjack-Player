@@ -17,8 +17,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
-#include "../../libcs50/counters.h"
-#include "../../libcs50/mem.h"
+#include "../libcs50/counters.h"
 
 /**************** global types ****************/
 typedef struct card card_t;  // card; opaque to users of the module
@@ -89,7 +88,7 @@ int handGetValueOfHand(hand_t* hand);
 int handGetNumberOfCards (hand_t* hand);
 char* handSortedString(hand_t* hand);
 hand_t* handNew(); 
-bool handAddcard (hand_t* hand, card_t* card, bool faceUp);
+bool handAddCard (hand_t* hand, card_t* card, bool faceUp);
 void handCalculateValue(hand_t* hand); 
 void handDelete (hand_t* hand);  
 

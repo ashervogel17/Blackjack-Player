@@ -3,14 +3,15 @@
 # Asher Vogel
 # CS 50, Fall 2022
 
-OBJS = decisionmaker.o player.o cards.o
-L = ../libcs50
-LIBS = $L/libcs50-given.a
+OBJS = decisionmaker.o player.o ../cards/cards.o
+L1 = ../libcs50
+L2 = ../network
+LIBS = $(L1)/libcs50-given.a $(L2)/network.a
 
 # comment out the following to turn off logging
 APPTEST=-DAPPTEST
 
-CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) $(APPTEST) -I$L
+CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) $(APPTEST) -I$(L1) -I$(L2)
 CC = gcc
 MAKE = make
 # for memory-leak tests
@@ -20,6 +21,7 @@ player: $(OBJS) $(LIBS)
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
 decisionmaker.o: decisionmaker.h
+../cards/cards.o: ../cards/cards.h
 
 .PHONY: clean #test
 

@@ -1,34 +1,28 @@
-# Makefile for CS50 cards final project module
+# Makefile for 'bag' module
 #
-# Nathaniel Roe 
+# David Kotz, April 2016, 2017, 2019, 2021
+# updated by Xia Zhou, July 2016, 2018, January 2019
 # CS 50, Fall 2022
 
-# uncomment the following to turn on verbose memory logging
-#TESTING= -DMEMTEST
+OBJS = cardstest.o cards.o 
+LIBS = ../libcs50/libcs50-given.a
 
-#MISC. TEST CASES FOR FXNS
-#TESTING=-DAPPTEST
-L = ../../libcs50
-LIBS = $L/libcs50.a
-CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I$L
+CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I../lib
 CC = gcc
-PROG = cards
 MAKE = make
+# for memory-leak tests
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
-OBJS = cards.o
 
-.PHONY: all clean 
-
-#makes indexerand indextest
-all: cards
-
-$(PROG): $(OBJS) $(LIBS)
+cardstest: $(OBJS)
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
-# object files depend on header files
-cards.o: cards.c
+cardstest.o: cards.h ../libcs50/counters.h
+cards.o: cards.h
 
-clean: 
-	rm -f $(PROG)
+.PHONY: clean
+
+clean:
+	rm -rf *.dSYM  # MacOS debugger info
 	rm -f *~ *.o
-	rm -rf *.dSYM
+	rm -f bagtest
+	rm -f core

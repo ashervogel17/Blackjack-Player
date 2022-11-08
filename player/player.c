@@ -17,6 +17,12 @@
 #include <string.h>
 #include <file.h>
 #include "decisionmaker.h"
+#include "../cards/cards.h"
+#include "../network/clientNetwork.h"
+// #include "../network/serverNetwork.h"
+#include <sys/socket.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 
 const int MAX_DECISIONS = 21;
 const int MAX_CARD_CHARS = 20;
@@ -58,10 +64,13 @@ int main (const int argc, char* argv[]) {
     }
 
     // connect to server
-    // THIS FUNCTION WILL BE WRITTEN BY ELI
+    int client_fd = establish_client_connection(*IPAddress, *port);
 
     // play the game
-    // play(*isTraining, decisionmaker);
+    play(*isTraining, decisionmaker);
+
+    // closer connection to server
+    terminate_client_connection(client_fd);
 
     // save decisionmaker to memory
     decisionmaker_save(decisionmaker, *decisionmakerFilename);
@@ -169,23 +178,30 @@ static int parseArgs(const int argc, char* argv[], char** name, char** IPAddress
     }
 
 static void play(bool isTraining, decisionmaker_t* decisionmaker) {
+    int sock = 0;
+
     char* dealerCard = NULL;
     char* playerHand = NULL;
     char* state = NULL;
     int action;
     int* actionArray = NULL;
-    char* stateArray = NULL;
+    char** stateArray = NULL;
     int loc;
     int reward;
 
-    char* message; // = message from server;
-    // hand_t* hand = newHand();
+    char message[100] = { 0 };
+    printf("Listening for message\n");
+    read(sock, message, 100);
+    printf("I don't want to listen anymore\n");
+    hand_t* hand;
     
     while (strcmp(message, "QUIT") != 0) {
+        printf("hi");
         if (strcmp(message, "BEGIN") == 0) {
-            // inialize empty hand
+            printf("Got begin message\n");
+            hand = handNew();
             actionArray = calloc(MAX_DECISIONS, sizeof(int));
-            char* stateArray = calloc(MAX_DECISIONS, sizeof(char*));
+            stateArray = calloc(MAX_DECISIONS, sizeof(char*));
             loc = 0;
         }
         else if (strcmp(message, "DECISION") == 0) {
@@ -193,7 +209,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker) {
                 action = decisionmaker_decide(decisionmaker, state);
             }
             else {
-                // playerHand = sorted hand string (need to write this function)
+                playerHand = handSortedString(hand);
 
                 state = malloc(sizeof(char)*(strlen(dealerCard)) + 1 + strlen(playerHand) + 1);
                 strcpy(state, dealerCard);
@@ -203,20 +219,24 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker) {
                 free(dealerCard);
                 free(playerHand);
 
-                // if (hand score is 21) {
-                //     action = 0;
-                // }
-                // else if (hand score <= 11) {
-                //     action = 1;
-                // }
-                // else {
-                //     action = rand() % 2;
-                // }
+                if (handGetValueOfHand(hand) >= 21) {
+                    action = 0;
+                }
+                else if (handGetValueOfHand(hand) <= 11) {
+                    action = 1;
+                }
+                else {
+                    action = rand() % 2;
+                }
                 actionArray[loc] = action;
-                stateArray[loc] = state;
+                strcpy(stateArray[loc], state);
                 loc++;
-
-                // send message with action
+            }
+            if (action == 0) {
+                send(sock, "STAND", 10, 0);
+            }
+            else {
+                send(sock, "HIT", 10, 0);
             }
 
         }
@@ -226,11 +246,11 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker) {
             if (sscanf(message, "CARD %s", cardString) != 1) {
                 fprintf(stderr, "Invalid CARD message received\n");
             }
-            //card_t* card = parseCard(cardString);
-            // addCardToHand(hand, card);
+            card_t* card = cardParse(cardString);
+            handAddCard(hand, card, false);
             free(cardString);
         }
-        else if (*message == "D") {
+        else if (*message == 'D') {
             dealerCard = malloc(sizeof(char)*10);
             char* suit = malloc(sizeof(char)*10);
             if (sscanf(message, "DEALER %s of %s", dealerCard, suit) != 2) {
@@ -238,7 +258,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker) {
             }
             free(suit);
         }
-        else if (*message == "R") {
+        else if (*message == 'R') {
             if (strcmp(message, "WIN") == 0 || strcmp(message, "LOOSE") == 0 || strcmp(message, "PUSH") == 0) {
                 // if training, update average rewards
                 if (isTraining) {
@@ -268,11 +288,9 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker) {
             }
         }
         else {
-            fprintf(stderr, "Received unfamiliar command\n");
+            // fprintf(stderr, "Received unfamiliar command\n");
         }
-        free(message);
-        // get next message
-        
+        read(sock, message, 100);
     }
     
 

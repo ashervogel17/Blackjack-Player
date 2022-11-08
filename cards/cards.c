@@ -198,9 +198,9 @@ deck_t* deckNew() {
     deck_t* deck = malloc(sizeof(deck_t));  // allocate m 
   
   //  initialize counters objects to be passed to cardNew()
-  counters_t *valCount = NULL;
-  counters_t *suitCount = NULL;
-  counters_t *rankCount = NULL;
+  counters_t *valCount = counters_new();
+  counters_t *suitCount = counters_new();
+  counters_t *rankCount = counters_new();
 
   //  initialize the counters
   counters_set(valCount, VAL_COUNTER_ID, 2);  // initialize the valCount to 2 (minimum card value for card = 2)
@@ -675,31 +675,3 @@ card_t* cardNew(counters_t *valCount, counters_t *suitCount, counters_t *rankCou
 }
 
 /**************** main() for testing ****************/
-
-int main(int argc, char *argv[]) {
-  
-  //  initialize counters objects to be passed to cardNew()
-  counters_t *valCount = NULL;
-  counters_t *suitCount = NULL;
-  counters_t *rankCount = NULL;
-
-  //  initialize the counters
-  counters_set(valCount, VAL_COUNTER_ID, 2);  // initialize the valCount to 2 (minimum card value for card = 2)
-  counters_set(suitCount, SUIT_COUNTER_ID, 1);
-  counters_set(rankCount, RANK_COUNTER_ID, 1);
-
-  // set
-  // // add relevant counters keys for value, suit, and rank
-  // counters_add(valCount, VAL_COUNTER_ID);
-  // counters_add(suitCount, SUIT_COUNTER_ID);
-  // counters_add(rankCount, RANK_COUNTER_ID);
-  
-  //  create a card
-  // card_t *newCard = cardNew(valCount, suitCount, rankCount);
-
-  return 0;
-}
-
-
-
-
