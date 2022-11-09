@@ -51,53 +51,148 @@ typedef struct deck deck_t;  // stores the deck of cards as an array of pointers
 #define MAX_RANK_LETTERCOUNT 20
 /**************** functions ****************/
 
-/**************** cardNew()****************/
-/* Create a new card structure .
+/*card methods*/
+
+/* Create a new card structure
  *
+ * Caller provides:
+ *      a rank (Ace, Two, Three, ..., Ten, Jack, Queen, King)
+ *      a suit (Diamonds, Hearts, Clubs, Spades)
  * We return:
- *   a pointer to a new "card" structure .
+ *   a pointer to a new "card" structure if the rank and suit are valid
+ *   NULL if any parameters are NULL or if the rank or suit are invalid
  * We guarantee:
  *   The card is assigned at creation (ex: 2 of clubs)
  * Caller is responsible for:
  *   later freeing allocated space for the card via cardDelete()
  */
-card_t* cardNew(counters_t *valCount, counters_t *suitCount, counters_t *rankCount);
+card_t* cardNew(char* rank, char* suit);
 
-
-/**************** cardParse()****************/
-/* Create a new card from a passed in string.
- * receive a string and from that string get the card data
- * parse the string for 3 strings (format: Seven of Hearts, Ace of Diamonds)
- * after parsing the string, allocate memory for a card structure
- * caller is responsible for later freeing the memory for the created card
- * 
+/**
+ * Caller provides:
+ *      valid cardString (e.g. Seven of Diamonds, King of Spades, etc.)
+ * We return:
+ *      a card struct corresponding to the given cardString
+ *      NULL if the cardString is invalid or NULL
+ * Notes:
+ *      the caller is responsible for freeing cardString
+ *      the caller is responsible for freeing the card struct's memory later with cardDelete()
  */
 card_t* cardParse(char *cardString);
 
-/*deck methods*/
-int deckGetNumberOfCards (deck_t* deck);
-bool deckIsShuffled (deck_t* deck); 
-card_t** deckGetCards (deck_t* deck); 
-deck_t* deckNew(); 
-void deckDelete(deck_t* deck); 
-void deckShuffle(deck_t* deck);
+/* simple getter for card value */
+int cardGetValue (card_t* card);
+
+/* simple getter for card suit */
+char* cardGetSuit (card_t* card); 
+
+/* simple getter for card rank */
+char* cardGetRank (card_t* card);
+
+/**
+ * Caller provides:
+ *      card struct
+ * We do:
+ *      free the memory used by this struct
+ *      free the pointer to the struct
+ * */
+void cardDelete (card_t* card); 
+
+/**
+ * Caller provides:
+ *      card struct
+ * We return:
+ *      the name of the card (e.g. Seven of Diamonds, Four of Hearts, Queen of Spades)
+ * Notes:
+ *      the card struct is unaltered
+ *      the caller is responsible for freeing the string we return
+ * */
+char* cardGetName(card_t* card);
+
+/**
+ * Caller provides:
+ *      card struct
+ * We print:
+ *      the name of the card
+ * Notes:
+ *      the card struct is unaltered
+ *      this function frees all memory is allocates
+ * */
+void cardPrint(card_t* card);
+
+
 
 /*hand methods*/
+
+/**
+ * Create an empty hand struct (returns NULL if function cannot allocate memory)
+ * Caller is responsible for calling handDelete()
+ * */
+hand_t* handNew();
+
+/* simple gett for hand cards */
 card_t** handGetCards (hand_t* hand); 
+
+/* simple gett for hand value */
 int handGetValueOfHand(hand_t* hand);
+
+/* simple gett for hand number of cards */
 int handGetNumberOfCards (hand_t* hand);
+
+/**
+ * Caller provides:
+ *      valid hand struct
+ * We return:
+ *      a string with one word for each card's rank sorted in ascending order (e.g. "Two Nine Queen")
+ * Notes:
+ *      hands is unaltered by this function
+ *      the caller is responsible for freeing the returned string
+ * */
 char* handSortedString(hand_t* hand);
-hand_t* handNew(); 
-bool handAddCard (hand_t* hand, card_t* card, bool faceUp);
+
+/**
+ * The caller provides:
+ *      valid hand
+ *      valid card
+ * We do:
+ *      add the card to the hand array
+ * Notes:
+ *      the card is unaffected
+ * */
+bool handAddCard (hand_t* hand, card_t* card);
+
+/**
+ * The caller provides:
+ *      valid hand
+ * We do:
+ *      set the hand's value within the struct to the value of the hand (accounts for soft aces)
+ * */
 void handCalculateValue(hand_t* hand); 
+
+/**
+ * Frees all memory associated with the hand
+ * */
 void handDelete (hand_t* hand);  
 
-/*card methods*/
-int cardGetValue (card_t* card);
-char* cardGetSuit (card_t* card); 
-char* cardGetRank (card_t* card);
-void cardDelete (card_t* card); 
-card_t* deckDealRandomCard(deck_t* deck);
+/**
+ * Prints the cards in a hand to stdout
+ * Hand is unaffected
+ * */
+void handPrint(hand_t* hand);
+
+
+
+/*deck methods*/
+// deck_t* deckNew(); 
+// int deckGetNumberOfCards (deck_t* deck);
+// bool deckIsShuffled (deck_t* deck); 
+// card_t** deckGetCards (deck_t* deck); 
+// void deckShuffle(deck_t* deck);
+// card_t* deckDealRandomCard(deck_t* deck);
+// void deckDelete(deck_t* deck); 
+
+
+
 
 
 #endif // __BAG_H

@@ -7,7 +7,10 @@
 OBJS = cardstest.o cards.o 
 LIBS = ../libcs50/libcs50-given.a
 
-CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I../lib
+
+
+
+CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I../libcs50
 CC = gcc
 MAKE = make
 # for memory-leak tests
@@ -17,7 +20,7 @@ cardstest: $(OBJS)
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
 cardstest.o: cards.h ../libcs50/counters.h
-cards.o: cards.h
+card.o: cards.h
 
 .PHONY: clean
 

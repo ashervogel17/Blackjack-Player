@@ -9,161 +9,155 @@
 */
 
 #include "cards.h" 
+#include <unittest.h>
 
 
 /****************************UNIT TESTING********************************/
 
+int test_cardNew_and_cardDelete() {
+    START_TEST_CASE("cardNew and cardDelete");
 
-void printCard(card_t* card) {
-    fprintf(stdout, "Rank: %s, Suit: %s, Value: %d\n", cardGetRank(card), cardGetSuit(card), cardGetValue(card)); 
+    card_t* card1 = cardNew(NULL, "C");
+    EXPECT(card1 == NULL);
+    card1 = cardNew("A", NULL);
+    EXPECT(card1 == NULL);
+    card1 = cardNew("P", "S");
+    EXPECT(card1 == NULL);
+    card1 = cardNew("K", "T");
+    EXPECT(card1 == NULL);
+    
+    card1 = cardNew("Eight", "Diamonds");
+    card_t* card2 = cardNew("Ace", "Clubs");
+    card_t* card3 = cardNew("Queen", "Spades");
+
+    EXPECT(strcmp(cardGetRank(card1), "Eight") == 0);
+    EXPECT(strcmp(cardGetSuit(card1), "Diamonds") == 0);
+    EXPECT(cardGetValue(card1) == 8);
+    EXPECT(strcmp(cardGetRank(card2), "Ace") == 0);
+    EXPECT(strcmp(cardGetSuit(card2), "Clubs") == 0);
+    EXPECT(cardGetValue(card2) == 11);
+    EXPECT(strcmp(cardGetRank(card3), "Queen") == 0);
+    EXPECT(strcmp(cardGetSuit(card3), "Spades") == 0);
+    EXPECT(cardGetValue(card3) == 10);
+
+    cardDelete(card1);
+    cardDelete(card2);
+    cardDelete(card3);
+    
+    END_TEST_CASE;
+    return TEST_RESULT;
 }
 
+int test_cardParse_and_cardGetName(){
+    START_TEST_CASE("cardParse");
 
-//deck 
-void testDeck(int counter) {
-    
-    deck_t* deck = deckNew(); 
-    
-    if (deck == NULL) {
-        fprintf(stdout, "Error with deckNew.\n");
-        counter += 1;  
-    }
+    card_t* card1 = cardParse(NULL);
+    EXPECT(card1 == NULL);
+    card1 = cardParse("Water Buffalo");
+    EXPECT(card1 == NULL);
+    card1 = cardParse("Thirteen of Spades");
+    EXPECT(card1 == NULL);
+    card1 = cardParse("Four of Buildings");
+    EXPECT(card1 == NULL);
 
-    //test deck getter methods
-    if (deckGetNumberOfCards(deck) != 52) {
-        fprintf(stdout, "Error with numberOfCards.\n"); 
-        counter += 1;  
-    }
+    card1 = cardParse("Seven of Spades");
+    card_t* card2 = cardParse("Jack of Clubs");
+    card_t* card3 = cardParse("Ace of Diamonds");
 
-    if (deckIsShuffled(deck)) {
-        fprintf(stdout, "Error with shuffled\n"); 
-        counter += 1;  
-    }
+    EXPECT(strcmp(cardGetRank(card1), "Seven") == 0);
+    EXPECT(strcmp(cardGetSuit(card1), "Spades") == 0);
+    EXPECT(cardGetValue(card1) == 7);
+    EXPECT(strcmp(cardGetRank(card2), "Jack") == 0);
+    EXPECT(strcmp(cardGetSuit(card2), "Clubs") == 0);
+    EXPECT(cardGetValue(card2) == 10);
+    EXPECT(strcmp(cardGetRank(card3), "Ace") == 0);
+    EXPECT(strcmp(cardGetSuit(card3), "Diamonds") == 0);
+    EXPECT(cardGetValue(card3) == 11);
 
-    card_t** cards = deckGetCards(deck); 
-    int cardCount = 0; 
-    for (int i = 0; i < sizeof(cards); i++) {
-        cardCount++; 
-    }
+    char* card1Name = cardGetName(card1);
+    char* card2Name = cardGetName(card2);
+    char* card3Name = cardGetName(card3);
 
-    if (cardCount != 52) {
-        fprintf(stdout, "Error with cards\n"); 
-        counter += 1;  
-    }
+    EXPECT(strcmp(card1Name, "Seven of Spades") == 0);
+    EXPECT(strcmp(card2Name, "Jack of Clubs") == 0);  
+    EXPECT(strcmp(card3Name, "Ace of Diamonds") == 0);
 
-    deckShuffle(deck); 
-    if (!(deckIsShuffled(deck))) {
-        fprintf(stdout, "Error with deckShuffle\n"); 
-        counter += 1;  
-    }
+    cardDelete(card1);
+    cardDelete(card2);
+    cardDelete(card3);
+    free(card1Name);
+    free(card2Name);
+    free(card3Name);
 
-    card_t* card = deckDealRandomCard(deck); 
-    if (card == NULL || deckGetNumberOfCards(deck) != 52) {
-        fprintf(stdout, "Error with deckDealRandomCard\n"); 
-        counter += 1; 
-    }
-
-    deckDelete(deck); 
+    END_TEST_CASE;
+    return TEST_RESULT;
 }
 
-//test hand
-void testHand(int counter) {
+int test_handFunctions() {
+    START_TEST_CASE("handAddCard and handCalculateValue");
 
-    hand_t* hand = handNew(); 
-    if (hand == NULL) {
-        fprintf(stdout, "Error with handNew\n"); 
-        counter += 1; 
-    }
+    hand_t* hand = handNew();
+    card_t* card1 = cardParse("Ace of Diamonds");
+    card_t* card2 = cardParse("Seven of Spades");
+    card_t* card3 = cardParse("Jack of Clubs");
+    card_t* card4 = cardParse("Ace of Clubs");
 
-    deck_t* deck = deckNew(); 
-    deckShuffle(deck); 
-    card_t* card = deckDealRandomCard(deck);
+    EXPECT(handAddCard(hand, NULL) == false);
+    EXPECT(handGetValueOfHand(hand) == 0);
+    char* hand0Str = handSortedString(hand);
+    EXPECT(strcmp(hand0Str, "") == 0);
 
-    if (!(handAddCard(hand, card, false))) {
-        fprintf(stdout, "Error with handAddCard\n"); 
-        counter += 1;  
-    } 
+    EXPECT(handAddCard(hand, card1) == true);
+    EXPECT(handGetValueOfHand(hand) == 11);
+    char* hand1Str = handSortedString(hand);
+    EXPECT(strcmp(hand1Str, "Ace") == 0);
 
-    if (handGetNumberOfCards(hand) != 1) {
-        fprintf(stdout, "Error with handGetNumberOfCards\n"); 
-        counter += 1; 
-    }
+    EXPECT(handAddCard(hand, card2) == true);
+    EXPECT(handGetValueOfHand(hand) == 18);
+    char* hand2Str = handSortedString(hand);
+    EXPECT(strcmp(hand2Str, "Seven Ace") == 0);
 
-    if (handGetValueOfHand(hand) != cardGetValue(card)) {
-        fprintf(stdout, "Error with handGetValueOfHand\n"); 
-        counter += 1; 
-    }
+    EXPECT(handAddCard(hand, card3) == true);
+    EXPECT(handGetValueOfHand(hand) == 18);
+    char* hand3Str = handSortedString(hand);
+    EXPECT(strcmp(hand3Str, "Seven Jack Ace") == 0);
 
-    card_t** cards = handGetCards(hand); 
-    if (cards == NULL) {
-        fprintf(stdout, "Error with handGetCards\n"); 
-        counter += 1; 
-    }
+    EXPECT(handAddCard(hand, card4) == true);
+    EXPECT(handGetValueOfHand(hand) == 19);
+    char* hand4Str = handSortedString(hand);
+    EXPECT(strcmp(hand4Str, "Seven Jack Ace Ace") == 0);
 
-    if (cards[0] != card) {
-        fprintf(stdout, "Error with handGetCards\n"); 
-        counter += 1; 
-    }
+    printf("Built hand: \n");
+    handPrint(hand);
 
-    fprintf(stdout, "Test for handSortedString: %s\n", handSortedString(hand));
+    handDelete(hand);
+    free(hand0Str);
+    free(hand1Str);
+    free(hand2Str);
+    free(hand3Str);
+    free(hand4Str);
 
-    handDelete(hand); 
+    END_TEST_CASE;
+    return TEST_RESULT;
 }
 
+int main(const int argc, char* arv[]) {
+    int failed = 0;
 
-//card test 
-void testCard(int counter) {
+    failed += test_cardNew_and_cardDelete();
+    failed += test_cardParse_and_cardGetName();
 
-    card_t* card = cardParse("Seven of Hearts"); 
-
-    if (cardGetValue(card) != 7) {
-        fprintf(stdout, "Error with cardParse\n"); 
-        counter += 1; 
-    }
-
-    if (strcmp(cardGetSuit(card), "H") != 0) {
-        fprintf(stdout, "Error with cardParse\n"); 
-        counter += 1; 
-    }
-
-    if (strcmp(cardGetRank(card), "7") != 0) {
-        fprintf(stdout, "Error with cardParse\n"); 
-        counter += 1; 
-    }
-
-    cardDelete(card); 
-}
-
-int main(const int argc, char* argv[]) {
-
-    int numberOfErrors = 0; 
-
-    testDeck(numberOfErrors); 
-    testHand(numberOfErrors); 
-    testCard(numberOfErrors); 
-
-    fprintf(stdout, "Number of errors: %d\n", numberOfErrors); 
-
-    //test for expected functionality 
-    deck_t* deck = deckNew(); 
-    deckShuffle(deck); 
-    card_t** cardsInDeck = deckGetCards(deck); 
+    failed += test_handNew_and_handDelete();
+    failed += test_handAddCard_and_handCalculateValue();
     
-    for (int i = 0; i < 52; i++) {
-        printCard(cardsInDeck[i]); 
+    if (failed) {
+        printf("FAIL %d test cases\n", failed);
+        return failed;
+    }
+    else {
+        printf("PASS all test cases\n");
+        return 0;
     }
 
-    hand_t* hand = handNew(); 
-    handAddCard(hand, deckDealRandomCard(deck), false);
-    handAddCard(hand, deckDealRandomCard(deck), false);
-    card_t** cardsInHand = handGetCards(hand); 
-
-    for (int i = 0; i < 2; i++) {
-        printCard(cardsInHand[i]); 
-    }  
-
-    handDelete(hand); 
-    deckDelete(deck); 
-    
-    return numberOfErrors; 
+    return 0;
 }
