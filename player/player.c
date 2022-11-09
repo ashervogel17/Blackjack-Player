@@ -30,7 +30,7 @@ const int MAX_CARD_CHARS = 20;
 static int parseArgs(const int argc, char* argv[], char** name, char** IPAddress, int* port,
     char** decisionmakerFilename, bool* isTraining);
 
-static void play(bool isTraining, decisionmaker_t* decisionmaker);
+static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, int* clinet_fd);
 
 int main (const int argc, char* argv[]) {
     // allocate memory for pointers
@@ -64,13 +64,13 @@ int main (const int argc, char* argv[]) {
     }
 
     // connect to server
-    int client_fd = establish_client_connection(*IPAddress, *port);
+    int* client_fd = establish_client_connection(*IPAddress, *port);
 
     // play the game
-    play(*isTraining, decisionmaker);
+    play(*isTraining, decisionmaker, *name, client_fd);
 
     // closer connection to server
-    terminate_client_connection(client_fd);
+    terminate_client_connection(*client_fd);
 
     // save decisionmaker to memory
     decisionmaker_save(decisionmaker, *decisionmakerFilename);
@@ -177,9 +177,7 @@ static int parseArgs(const int argc, char* argv[], char** name, char** IPAddress
         return 0;
     }
 
-static void play(bool isTraining, decisionmaker_t* decisionmaker) {
-    int sock = 0;
-
+static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, int* client_fd) {
     char* dealerCard = NULL;
     char* playerHand = NULL;
     char* state = NULL;
@@ -188,15 +186,35 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker) {
     char** stateArray = NULL;
     int loc;
     int reward;
-
-    char message[100] = { 0 };
-    printf("Listening for message\n");
-    read(sock, message, 100);
-    printf("I don't want to listen anymore\n");
     hand_t* hand;
+
+    // const int SIZE = 200;
+    // char* line = "hello";
+
+    // while (strcmp(line, "QUIT") != 0) {
+    //     char buffer[SIZE];
+    //     send_message(line, *client_fd);
+    //     receive_message(*client_fd, SIZE, buffer);
+    //     line = "QUIT";
+    //     send_message(line, *client_fd);
+    // }
+
+    // send join message
+    char* join_message = malloc(sizeof(char)*(strlen(name + 10)));
+    strcpy(join_message, "JOIN ");
+    strcat(join_message, name);
+    send_message(join_message, *client_fd);
+    free(join_message);
+
+    // listen for first message
+    char* message = malloc(100*sizeof(char));
+    printf("Listening for message\n");
+    receive_message(*client_fd, 100, message);
+    printf("message: %s\n", message);
+    printf("I don't want to listen anymore\n");
+    
     
     while (strcmp(message, "QUIT") != 0) {
-        printf("hi");
         if (strcmp(message, "BEGIN") == 0) {
             printf("Got begin message\n");
             hand = handNew();
@@ -233,10 +251,10 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker) {
                 loc++;
             }
             if (action == 0) {
-                send(sock, "STAND", 10, 0);
+                send_message("STAND", *client_fd);
             }
             else {
-                send(sock, "HIT", 10, 0);
+                send_message("HIT", *client_fd);
             }
 
         }
@@ -247,7 +265,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker) {
                 fprintf(stderr, "Invalid CARD message received\n");
             }
             card_t* card = cardParse(cardString);
-            handAddCard(hand, card, false);
+            handAddCard(hand, card);
             free(cardString);
         }
         else if (*message == 'D') {
@@ -290,7 +308,13 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker) {
         else {
             // fprintf(stderr, "Received unfamiliar command\n");
         }
-        read(sock, message, 100);
+        if (message != NULL) {
+            free(message);
+        }
+        receive_message(*client_fd, 100, message);
+    }
+    if (message != NULL) {
+        free(message);
     }
     
 
