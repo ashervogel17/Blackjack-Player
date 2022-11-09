@@ -193,7 +193,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
     
     // main while loop
     while (strcmp(message, "QUIT") != 0) {
-        message = malloc(sizeof(char)*50);
+        message = calloc(50, sizeof(char));
 
         // send join message if needed
         if (sent_join_message != 0) {
@@ -214,6 +214,11 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             loc = 0;
         }
         else if (strcmp(message, "DECISION") == 0) {
+            #ifdef DEBUG
+            printf("My hand:\n");
+            handPrint(hand);
+            printf("Dealer showing: %s\n", dealerCard);
+            #endif
             if (!isTraining) { // tournament mode
                 action = decisionmaker_decide(decisionmaker, state);
             }
@@ -238,7 +243,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                     action = rand() % 2;
                 }
                 actionArray[loc] = action;
-                strcpy(stateArray[loc], state);
+                stateArray[loc] = state;
                 loc++;
             }
             if (action == 0) {
@@ -250,31 +255,32 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
 
         }
         // message is either CARD, DEALER, or RESULT
-        if (*message == 'C') {
-            char* cardString = malloc(sizeof(char)*MAX_CARD_CHARS);
-            if (sscanf(message, "CARD %s", cardString) != 1) {
+        else if (*message == 'C') {
+            // char* cardString = malloc(sizeof(char)*MAX_CARD_CHARS);
+            char* rank = calloc(10, sizeof(char));
+            char* suit = calloc(10, sizeof(char));
+            if (sscanf(message, "CARD %s of %s", rank, suit) != 2) {
                 fprintf(stderr, "Invalid CARD message received\n");
             }
-            card_t* card = cardParse(cardString);
+            card_t* card = cardNew(rank, suit);
             handAddCard(hand, card);
-            free(cardString);
         }
         else if (*message == 'D') {
-            dealerCard = malloc(sizeof(char)*10);
-            char* suit = malloc(sizeof(char)*10);
+            dealerCard = calloc(10, sizeof(char));
+            char* suit = calloc(10, sizeof(char));
             if (sscanf(message, "DEALER %s of %s", dealerCard, suit) != 2) {
                 fprintf(stderr, "Invalid DEALER message received\n");
             }
             free(suit);
         }
         else if (*message == 'R') {
-            if (strcmp(message, "WIN") == 0 || strcmp(message, "LOOSE") == 0 || strcmp(message, "PUSH") == 0) {
+            if (strcmp(message, "RESULT WIN") == 0 || strcmp(message, "RESULT LOSE") == 0 || strcmp(message, "RESULT PUSH") == 0) {
                 // if training, update average rewards
                 if (isTraining) {
-                    if (strcmp(message, "WIN") == 0) {
+                    if (strcmp(message, "RESULT WIN") == 0) {
                         reward = 1;
                     }
-                    else if (strcmp(message, "LOOSE") == 0) {
+                    else if (strcmp(message, "RESULT LOSE") == 0) {
                         reward = -1;
                     }
                     else {
