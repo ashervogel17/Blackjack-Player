@@ -317,14 +317,6 @@ bool handAddCard (hand_t* hand, card_t* card) {
     if (hand == NULL || card == NULL) {
         return false; 
     }
-    // printf("Got card: ");
-    // cardPrint(card);
-    // printf("\n");
-
-    // int loc = 0;
-    // while (hand->cards[loc*sizeof(card_t*)] != NULL) {
-    //   loc++;
-    // }
     hand->cards[(hand->numberOfCards)] = card;
     hand -> numberOfCards ++;
     handCalculateValue(hand);
@@ -389,8 +381,63 @@ void handPrint(hand_t* hand) {
 }
 
 
+/* deck methods */
 
+deck_t* deckNew() {
+  deck_t* deck = malloc(sizeof(deck_t)); 
 
+  deck -> numberOfCards = 52; 
+  deck -> shuffled = false; 
+  deck -> cards = malloc(52*sizeof(card_t*));
+
+  char* ranks[] = {"Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
+  char* suits[] = {"Diamonds", "Clubs", "Spades", "Hearts"}; 
+
+  for (int i=0; i < 13; i++){
+    for (int j=0; j < 4; j++) {
+      int index = j*13 + i;
+      card_t* card = cardNew(ranks[i], suits[j]);
+      deck->cards[index] = card;
+    }
+  }
+
+  return deck;
+}
+
+int deckGetNumberOfCards (deck_t* deck) { 
+    return deck -> numberOfCards; 
+}
+
+bool deckIsShuffled (deck_t* deck) {
+    return deck -> shuffled; 
+}
+
+card_t** deckGetCards (deck_t* deck) {
+    return deck -> cards; 
+}
+
+/**
+ * Caller provides:
+ *      a deck struct
+ * We do:
+ *      shuffle the cards in the deck (put the same cards in a different order)
+ * */
+void deckShuffle(deck_t* deck);
+
+/**
+ * Caller provides:
+ *      a deck struct
+ * We do:
+ *      check that the deck is shuffled - if not, shuffle it
+ *      remove one card from the deck and return it
+ *      decrement number of cards
+ * */
+card_t* deckDealRandomCard(deck_t* deck);
+
+/**
+ * Free all memory associated with the given deck
+ * */
+void deckDelete(deck_t* deck); 
 
 
 

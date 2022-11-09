@@ -183,13 +183,46 @@ void handPrint(hand_t* hand);
 
 
 /*deck methods*/
-// deck_t* deckNew(); 
-// int deckGetNumberOfCards (deck_t* deck);
-// bool deckIsShuffled (deck_t* deck); 
-// card_t** deckGetCards (deck_t* deck); 
-// void deckShuffle(deck_t* deck);
-// card_t* deckDealRandomCard(deck_t* deck);
-// void deckDelete(deck_t* deck); 
+
+/**
+ * Build and return a deck struct
+ * Intialize cards to an array with 52 cards (like a real deck)
+ * Intialize shuffled to false
+ * Initialize number of cards to 52
+ * */
+deck_t* deckNew();
+
+/* simple getter for deck number of cards */
+int deckGetNumberOfCards (deck_t* deck);
+
+/* simple getter for deck shuffled */
+bool deckIsShuffled (deck_t* deck);
+
+/* simple getter for deck cards */
+card_t** deckGetCards (deck_t* deck); 
+
+/**
+ * Caller provides:
+ *      a deck struct
+ * We do:
+ *      shuffle the cards in the deck (put the same cards in a different order)
+ * */
+void deckShuffle(deck_t* deck);
+
+/**
+ * Caller provides:
+ *      a deck struct
+ * We do:
+ *      check that the deck is shuffled - if not, shuffle it
+ *      remove one card from the deck and return it
+ *      decrement number of cards
+ * */
+card_t* deckDealRandomCard(deck_t* deck);
+
+/**
+ * Free all memory associated with the given deck
+ * */
+void deckDelete(deck_t* deck); 
 
 
 
