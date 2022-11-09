@@ -2,20 +2,22 @@
 // programming
 #include <arpa/inet.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include "clientNetwork.h"
-//#define PORT 8094 //port 8000 + team number --> 8014
+#include <time.h>
+#define PORT_EXAMPLE 8094 //port 8000 + team number --> 8014
 
-int establish_client_connection(char* IPAddress, int PORT)
+int* establish_client_connection(char* IPAddress, int PORT)
 {
-	int sock = 0, client_fd;
+	int sock= 0, client_fd;
 	struct sockaddr_in serv_addr;
 	//char* hello = "Hello from client";
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) { //create the socket object
 		printf("\n Socket creation error \n");
-		return -1;
+		exit(EXIT_FAILURE);
 	}
 
 	serv_addr.sin_family = AF_INET;
@@ -27,35 +29,42 @@ int establish_client_connection(char* IPAddress, int PORT)
 		<= 0) {
 		printf(
 			"\nInvalid address/ Address not supported \n");
-		return -1;
+		exit(EXIT_FAILURE);
 	}
 
 	if ((client_fd
-		= connect(sock, (struct sockaddr*)&serv_addr, //connect to the address saved by serv_adder
+		= connect(sock, (struct sockaddr*)&serv_addr, //connect this socket to the PORT and IPAddress
 				sizeof(serv_addr)))
 		< 0) {
 		printf("\nConnection Failed \n");
-		return -1;
+		exit(EXIT_FAILURE);
 	}
+	//printf("Client sucessfully connected to socket %d over port: %d\n", client_fd, PORT);
 
-	return client_fd; 
+	int* socketPointer = &sock;  
+
+	return socketPointer;  
 }
 
 
-int send_message(int sock, const char* message, size_t line_size){
-	if (send(sock, message, strlen(message), 0) != -1){
+int send_message(const char* message, int new_socket){ 
+	printf("trying to send message: %s\n", message);
+	if (send(new_socket, message, strlen(message) + 1, 0) != -1){
 		printf("message sent %s\n", message); 	
+		return 0; 
+	}else{
 
+		printf("message not sent!!\n"); 
 	}
 	return 1; 
 	//message not sent 
 }
 
 
-int receive_message(int sock, size_t nbytes){
-	char buffer[1024] = { 0 };
+int receive_message(int sock, size_t nbytes, char* buffer){
 	if (read(sock, buffer, 1024) != -1){
 		printf("message received: %s\n", buffer); //we read the response on the socket. 
+		return 0; 
 	} 
 	return 1; 
 }
@@ -63,5 +72,19 @@ int receive_message(int sock, size_t nbytes){
 
 void terminate_client_connection(int client_fd){
 	// closing the connected socket
-	close(client_fd);
+	close(client_fd); 
+}
+
+
+
+
+void delay(int number_of_milliseconds)
+{
+    // Storing start time
+    clock_t start_time = clock();
+ 
+    // looping till required time is not achieved
+    while (clock() < start_time + number_of_milliseconds) {
+		continue;
+	}
 }
