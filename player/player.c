@@ -23,14 +23,16 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <time.h>
 
 const int MAX_DECISIONS = 21;
 const int MAX_CARD_CHARS = 20;
+int* socketPointer; 
 
 static int parseArgs(const int argc, char* argv[], char** name, char** IPAddress, int* port,
     char** decisionmakerFilename, bool* isTraining);
 
-static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, int* clinet_fd);
+static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, char* IPAdress, int port);
 
 int main (const int argc, char* argv[]) {
     // allocate memory for pointers
@@ -63,14 +65,8 @@ int main (const int argc, char* argv[]) {
         decisionmaker = decisionmaker_new();
     }
 
-    // connect to server
-    int* client_fd = establish_client_connection(*IPAddress, *port);
-
     // play the game
-    play(*isTraining, decisionmaker, *name, client_fd);
-
-    // closer connection to server
-    terminate_client_connection(*client_fd);
+    play(*isTraining, decisionmaker, *name, *IPAddress, *port);
 
     // save decisionmaker to memory
     decisionmaker_save(decisionmaker, *decisionmakerFilename);
@@ -177,7 +173,8 @@ static int parseArgs(const int argc, char* argv[], char** name, char** IPAddress
         return 0;
     }
 
-static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, int* client_fd) {
+static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, char* IPAddress, int port) {
+    // declare variables
     char* dealerCard = NULL;
     char* playerHand = NULL;
     char* state = NULL;
@@ -188,33 +185,27 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, in
     int reward;
     hand_t* hand;
 
-    // const int SIZE = 200;
-    // char* line = "hello";
-
-    // while (strcmp(line, "QUIT") != 0) {
-    //     char buffer[SIZE];
-    //     send_message(line, *client_fd);
-    //     receive_message(*client_fd, SIZE, buffer);
-    //     line = "QUIT";
-    //     send_message(line, *client_fd);
-    // }
-
-    // send join message
-    char* join_message = malloc(sizeof(char)*(strlen(name + 10)));
-    strcpy(join_message, "JOIN ");
-    strcat(join_message, name);
-    send_message(join_message, *client_fd);
-    free(join_message);
-
-    // listen for first message
-    char* message = malloc(100*sizeof(char));
-    printf("Listening for message\n");
-    receive_message(*client_fd, 100, message);
-    printf("message: %s\n", message);
-    printf("I don't want to listen anymore\n");
+    // establish connection to server
+    socketPointer = establish_client_connection(IPAddress, port);
+    int new_socket = *socketPointer; 
+    char* message = "start";
+    int sent_join_message = -1;
     
-    
+    // main while loop
     while (strcmp(message, "QUIT") != 0) {
+        message = malloc(sizeof(char)*50);
+
+        // send join message if needed
+        if (sent_join_message != 0) {
+            sent_join_message = send_message("JOIN", new_socket); 
+        }
+        #ifdef DEBUG
+        printf("listening for message\n");
+        #endif
+        sleep(1);
+        receive_message(new_socket, 1024, message); 
+
+        // handle message
         if (strcmp(message, "BEGIN") == 0) {
             printf("Got begin message\n");
             hand = handNew();
@@ -251,10 +242,10 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, in
                 loc++;
             }
             if (action == 0) {
-                send_message("STAND", *client_fd);
+                send_message("STAND", new_socket);
             }
             else {
-                send_message("HIT", *client_fd);
+                send_message("HIT", new_socket);
             }
 
         }
@@ -311,11 +302,10 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, in
         if (message != NULL) {
             free(message);
         }
-        receive_message(*client_fd, 100, message);
     }
     if (message != NULL) {
         free(message);
     }
-    
 
+    terminate_client_connection(new_socket);
 }
