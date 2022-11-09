@@ -104,8 +104,6 @@ int test_handFunctions() {
 
     EXPECT(handAddCard(hand, NULL) == false);
     EXPECT(handGetValueOfHand(hand) == 0);
-    char* hand0Str = handSortedString(hand);
-    EXPECT(strcmp(hand0Str, "") == 0);
 
     EXPECT(handAddCard(hand, card1) == true);
     EXPECT(handGetValueOfHand(hand) == 11);
@@ -131,7 +129,6 @@ int test_handFunctions() {
     handPrint(hand);
 
     handDelete(hand);
-    free(hand0Str);
     free(hand1Str);
     free(hand2Str);
     free(hand3Str);
@@ -147,8 +144,7 @@ int main(const int argc, char* arv[]) {
     failed += test_cardNew_and_cardDelete();
     failed += test_cardParse_and_cardGetName();
 
-    failed += test_handNew_and_handDelete();
-    failed += test_handAddCard_and_handCalculateValue();
+    failed += test_handFunctions();
     
     if (failed) {
         printf("FAIL %d test cases\n", failed);
