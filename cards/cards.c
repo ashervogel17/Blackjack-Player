@@ -9,6 +9,7 @@
 
 /*  include statements  */
 #include "cards.h"
+#include <time.h>
 
 
 /**************** local types ****************/
@@ -421,8 +422,47 @@ card_t** deckGetCards (deck_t* deck) {
  *      a deck struct
  * We do:
  *      shuffle the cards in the deck (put the same cards in a different order)
+ * 
+ * Note: Implementation of Fisher-Yates algorithm for generation of random permutation 
+ * in linear time. Adapted from pseudocode found online at geeksforgeeks.com
  * */
-void deckShuffle(deck_t* deck);
+void deckShuffle(deck_t* deck) {
+
+  if (deck != NULL) { //safety check
+
+    srand (time(NULL)); //generate random number seed 
+  
+    card_t* cardOne; 
+    card_t* cardTwo; 
+
+    card_t** cards = deck -> cards; //get array of cards in deck
+    int sizeOfDeck = deck -> numberOfCards; 
+
+    //iterate through deck and implement Fisher-Yates swap
+    for (int i = sizeOfDeck - 1; i > 0; i--) { 
+
+      int j = rand() % (i + 1); 
+          
+      cardOne = cards[i];  
+      cardTwo = cards[j]; 
+      card_t* tempCard; 
+
+      tempCard = cardOne; 
+      cardOne = cardTwo; 
+      cardTwo = tempCard; 
+
+      cards[i] = cardOne; 
+      cards[j] = cardTwo; 
+    }
+
+    deck -> shuffled = true; //set shuffled to true 
+
+  } else { //safety check 
+    fprintf(stderr, "Cannot shuffle a NULL deck.\n");
+  }
+
+}
+
 
 /**
  * Caller provides:
@@ -432,23 +472,53 @@ void deckShuffle(deck_t* deck);
  *      remove one card from the deck and return it
  *      decrement number of cards
  * */
-card_t* deckDealRandomCard(deck_t* deck);
+card_t* deckDealRandomCard(deck_t* deck) {
+
+  if (deck == NULL) {
+    fprintf(stderr, "Cannot deal a card from a NULL deck.\n"); 
+    return NULL; 
+  }
+
+  if (!(deck -> shuffled)) { //ensure deck is shuffled
+    deckShuffle(deck); 
+  }
+
+  int sizeOfDeck = deck -> numberOfCards;
+  card_t** cards = deck -> cards; //get array of cards from deck
+  card_t* card; 
+
+  if (sizeOfDeck > 0) { //safety check
+    card = cards[sizeOfDeck -1]; //get card at 'last' index of array 
+  } else { 
+    fprintf(stderr, "Cannot deal cards from an empty deck.\n"); 
+    return NULL;
+  }
+
+  deck -> numberOfCards--; //decrement pointer to 'last' card
+
+  return card; 
+
+}
 
 /**
  * Free all memory associated with the given deck
  * */
-void deckDelete(deck_t* deck); 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*  deckDelete()  */
+/* see cards.h for explanation*/
+void deckDelete (deck_t* deck) {
+  // printf("Deleting hand\n");
+  int loc = 0;
+  while (deck->cards[loc] != NULL) {
+      card_t* card = deck -> cards[loc];
+      // printf("Deleting card: ");
+      // cardPrint(card);
+      // printf("\n");
+      cardDelete(card);
+      loc++;
+      if (loc == deck->numberOfCards) {
+        break;
+      }
+  }
+  free(deck->cards);
+  free(deck);
+}

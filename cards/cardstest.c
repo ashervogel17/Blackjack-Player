@@ -138,6 +138,62 @@ int test_handFunctions() {
     return TEST_RESULT;
 }
 
+int test_deckFunction() {
+    START_TEST_CASE("deck functions");
+
+    deck_t* deck = deckNew(); 
+    card_t** cards = deckGetCards(deck); 
+    
+    EXPECT(deckGetNumberOfCards(deck) == 52);
+    
+    for (int i = 0; i < deckGetNumberOfCards(deck); i++) {
+        fprintf(stdout, "Card %d: ", i + 1); 
+        cardPrint(cards[i]); 
+        fprintf(stdout, "\n");
+    }
+
+    fprintf(stdout, "\nTEST DECK SHUFFLE\n"); 
+
+    for (int i = 0; i < 15; i++) {
+        deckShuffle(deck); 
+    }
+
+    EXPECT(deckGetNumberOfCards(deck) == 52);
+    EXPECT(deckIsShuffled(deck) == true);
+
+    for (int i = 0; i < deckGetNumberOfCards(deck); i++) {
+        fprintf(stdout, "Card %d: ", i + 1); 
+        cardPrint(cards[i]); 
+        fprintf(stdout, "\n"); 
+    }
+
+    fprintf(stdout, "\nTEST DECK DEAL CARD\n"); 
+
+    fprintf(stdout, "Size of deck: %d\n", deckGetNumberOfCards(deck));
+
+    card_t* card = deckDealRandomCard(deck); 
+    cardPrint(card); 
+    fprintf(stdout, "\n"); 
+
+    EXPECT(deckGetNumberOfCards(deck) == 51);
+
+    fprintf(stdout, "Size of deck: %d\n", deckGetNumberOfCards(deck)); 
+
+    hand_t* hand = handNew(); 
+    handAddCard(hand, card); 
+    fprintf(stdout, "Hand: "); 
+    handPrint(hand); 
+    fprintf(stdout, "\n"); 
+
+    EXPECT(handGetNumberOfCards(hand) == 1);
+
+    handDelete(hand); 
+    deckDelete(deck); 
+
+    END_TEST_CASE;
+    return TEST_RESULT;
+}
+
 int main(const int argc, char* arv[]) {
     int failed = 0;
 
@@ -145,6 +201,7 @@ int main(const int argc, char* arv[]) {
     failed += test_cardParse_and_cardGetName();
 
     failed += test_handFunctions();
+    failed += test_deckFunction();
     
     if (failed) {
         printf("FAIL %d test cases\n", failed);

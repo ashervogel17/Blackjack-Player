@@ -228,4 +228,4 @@ void deckDelete(deck_t* deck);
 
 
 
-#endif // __BAG_H
+#endif // __CARDS_H
