@@ -19,7 +19,6 @@
 #include "decisionmaker.h"
 #include "../cards/cards.h"
 #include "../network/clientNetwork.h"
-// #include "../network/serverNetwork.h"
 #include <sys/socket.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -68,8 +67,18 @@ int main (const int argc, char* argv[]) {
     // play the game
     play(*isTraining, decisionmaker, *name, *IPAddress, *port);
 
+    #ifdef DEBUG
+    printf("out of play function\n");
+    fflush(stdout);
+    #endif
+
     // save decisionmaker to memory
     decisionmaker_save(decisionmaker, *decisionmakerFilename);
+
+    #ifdef DEBUG
+    printf("saved decisionmaker to disk\n");
+    fflush(stdout);
+    #endif
 
     // clean up
     free(*name);
@@ -192,7 +201,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
     int sent_join_message = -1;
     
     // main while loop
-    while (strcmp(message, "QUIT") != 0) {
+    while (true) {
         message = calloc(50, sizeof(char));
 
         // send join message if needed
@@ -202,7 +211,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
         #ifdef DEBUG
         printf("listening for message\n");
         #endif
-        sleep(1);
+        delay(26);
         receive_message(new_socket, 1024, message); 
 
         // handle message
@@ -225,15 +234,23 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             else {
                 playerHand = handSortedString(hand);
 
-                state = malloc(sizeof(char)*(strlen(dealerCard)) + 1 + strlen(playerHand) + 1);
-                strcpy(state, dealerCard);
-                strcat(state, " ");
-                strcat(state, playerHand);
+                stateArray[loc] = malloc(sizeof(char)*(strlen(dealerCard)) + 1 + strlen(playerHand) + 1);
+                strcpy(stateArray[loc], dealerCard);
+                strcat(stateArray[loc], " ");
+                strcat(stateArray[loc], playerHand);
 
-                free(dealerCard);
                 free(playerHand);
 
-                if (handGetValueOfHand(hand) >= 21) {
+                #ifdef DEBUG
+                printf("added state: %s\n\n", stateArray[loc]);
+                printf("all states:\n");
+                for (int i=0; i<=loc; i++) {
+                    printf("%s\n", stateArray[i]);
+                }
+                printf("\n");
+                #endif
+
+                if (handGetValueOfHand(hand) >= 21) { 
                     action = 0;
                 }
                 else if (handGetValueOfHand(hand) <= 11) {
@@ -243,7 +260,6 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                     action = rand() % 2;
                 }
                 actionArray[loc] = action;
-                stateArray[loc] = state;
                 loc++;
             }
             if (action == 0) {
@@ -278,7 +294,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                 // if training, update average rewards
                 if (isTraining) {
                     if (strcmp(message, "RESULT WIN") == 0) {
-                        reward = 1;
+                        reward = 1; 
                     }
                     else if (strcmp(message, "RESULT LOSE") == 0) {
                         reward = -1;
@@ -295,8 +311,10 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                 for (int i=0; stateArray[i] != NULL; i++) {
                     free(stateArray[i]);
                 }
+                free(dealerCard);
                 free(actionArray);
                 free(stateArray);
+                handDelete(hand);
             }
             else {
                 fprintf(stderr, "Invalid RESULT message received\n");
@@ -305,13 +323,18 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
         else {
             // fprintf(stderr, "Received unfamiliar command\n");
         }
+        if (strcmp(message, "QUIT") == 0) {
+            free(message);
+            break;
+        }
         if (message != NULL) {
             free(message);
         }
     }
-    if (message != NULL) {
-        free(message);
-    }
 
     terminate_client_connection(new_socket);
+    #ifdef DEBUG
+    printf("terminated connection\n");
+    fflush(stdout);
+    #endif
 }
