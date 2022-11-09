@@ -11,7 +11,7 @@ LIBS = $(L1)/libcs50-given.a $(L2)/network.a
 # comment out the following to turn off logging
 APPTEST=-DAPPTEST
 
-CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) $(APPTEST) -I$(L1) -I$(L2)
+CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) $(APPTEST) -I$(L1) -I$(L2) #-DDEBUG
 CC = gcc
 MAKE = make
 # for memory-leak tests

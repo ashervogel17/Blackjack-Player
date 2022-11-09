@@ -6,16 +6,38 @@
 #include <string.h>
 #include <sys/socket.h>
 #include "serverNetwork.h"
+#include <stddef.h>
+#define _BSD_SOURCE
 #include <unistd.h>
-#define PORT 8094
-int establish_server_connection()
-{
-	int server_fd, new_socket, valread;
+#include <time.h>
+#define EXAMPLE_PORT 8093
+
+typedef struct server_data {   // Structure declaration
+  int* socket;           // pointer to listen to the proper socket
+  int* server_fd;       // used to close the server
+}server_data_t; 
+
+
+server_data_t* serverData_new(int* socket, int* server_fd){
+  server_data_t* data = malloc(sizeof(server_data_t));
+
+  if (data == NULL) {
+    // error allocating memory for node; return error
+    return NULL;
+  } else {
+    data->socket = socket; //this is the actual correct way to store nodes. Honestly unecessary to malloc keys and items tbh. 
+    data->server_fd= server_fd;
+    return data;
+  }
+}
+
+server_data_t* establish_server_connection(char* IPAdress, int PORT){
+
+	printf("Establishing server connection...\n"); 
+	int server_fd, new_socket;
 	struct sockaddr_in address;
 	int opt = 1;
 	int addrlen = sizeof(address);
-	char buffer[1024] = { 0 };
-	char* hello = "Server: message received";
 
 	// Creating socket file descriptor
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -43,30 +65,65 @@ int establish_server_connection()
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
+
+
 	printf("Server listening on port: %d\n", PORT); 
+	printf("Waiting for client..\n"); 
+
 
 	if ((new_socket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen)) < 0){
 		perror("accept");
 		exit(EXIT_FAILURE);
 	}
 
-    while (strcmp(buffer, "exit\n") != 0) {
-		valread = read(new_socket, buffer, 1024);
-		printf("Client: "); 
-		printf("%s\n", buffer);
-		send(new_socket, hello, strlen(hello), 0);
+	int* socketPointer = &new_socket; 
+	int* server_fd_Pointer = &server_fd; 
 
-		//This is where we actually handle the messages sent between client and server. We need strcmp to deal with join, begin, 
+	server_data_t* data = serverData_new(socketPointer, server_fd_Pointer); 
+	return data; 
+}
 
-		if (buffer == NULL){
-			printf("Invalid response from server\n"); 
-			return 2; 
-		}
 
+void terminate_server_connection(server_data_t* data){
+	close(*data->socket); 
+	printf("Server closed\n"); 
+	shutdown(*data->server_fd, SHUT_RDWR); 
+}
+
+int send_message(const char* message, int new_socket){
+	delay();
+	if (send(new_socket, message, strlen(message), 0) != -1){
+		printf("message sent %s\n", message); 
+		return 0; 
 	}
-	// closing the connected socket
-	close(new_socket);
-	// closing the listening socket
-	shutdown(server_fd, SHUT_RDWR);
-	return 0;
+	else{
+		printf("message not sent!!\n"); 
+	}
+	return 1; 
+	//message not sent 
+}
+
+
+int receive_message(int sock, size_t nbytes, char *buffer){
+	if (read(sock, buffer, 1024) != -1){
+		printf("message received: %s\n", buffer); //we read the response on the socket. 
+		return 0; 
+	} 
+
+	if (buffer == NULL){
+		printf("Invalid response from server\n"); 
+		return 1; 
+	}
+	return 1; 
+}
+
+void delay()
+{
+	int c, d;
+   
+   	for (c = 1; c <= 32767; c++) {
+		for (d = 1; d <= 3000; d++) {
+			;
+		}
+	}
 }

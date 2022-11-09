@@ -48,9 +48,9 @@ int* establish_client_connection(char* IPAddress, int PORT)
 
 
 int send_message(const char* message, int new_socket){ 
-	printf("trying to send message: %s\n", message);
+	delay();
 	if (send(new_socket, message, strlen(message) + 1, 0) != -1){
-		printf("message sent %s\n", message); 	
+		printf("message sent %s\n", message); 
 		return 0; 
 	}else{
 
@@ -78,13 +78,13 @@ void terminate_client_connection(int client_fd){
 
 
 
-void delay(int number_of_milliseconds)
+void delay()
 {
-    // Storing start time
-    clock_t start_time = clock();
- 
-    // looping till required time is not achieved
-    while (clock() < start_time + number_of_milliseconds) {
-		continue;
+	int c, d;
+   
+   	for (c = 1; c <= 32767; c++) {
+		for (d = 1; d <= 3000; d++) {
+			;
+		}
 	}
 }

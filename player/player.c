@@ -31,7 +31,7 @@ int* socketPointer;
 static int parseArgs(const int argc, char* argv[], char** name, char** IPAddress, int* port,
     char** decisionmakerFilename, bool* isTraining);
 
-static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, char* IPAdress, int port);
+static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, char* IPAdress, int port, char* decisionmakerFilename);
 
 int main (const int argc, char* argv[]) {
     // allocate memory for pointers
@@ -65,7 +65,7 @@ int main (const int argc, char* argv[]) {
     }
 
     // play the game
-    play(*isTraining, decisionmaker, *name, *IPAddress, *port);
+    play(*isTraining, decisionmaker, *name, *IPAddress, *port, *decisionmakerFilename);
 
     #ifdef DEBUG
     printf("out of play function\n");
@@ -182,7 +182,7 @@ static int parseArgs(const int argc, char* argv[], char** name, char** IPAddress
         return 0;
     }
 
-static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, char* IPAddress, int port) {
+static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, char* IPAddress, int port, char* decisionmakerFilename) {
     // declare variables
     char* dealerCard = NULL;
     char* playerHand = NULL;
@@ -193,6 +193,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
     int loc;
     int reward;
     hand_t* hand;
+    int game_count = 1;
 
     // establish connection to server
     socketPointer = establish_client_connection(IPAddress, port);
@@ -216,7 +217,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
 
         // handle message
         if (strcmp(message, "BEGIN") == 0) {
-            printf("Got begin message\n");
+            printf("\n\n NEW GAME (#%d)\n\n", game_count);
             hand = handNew();
             actionArray = calloc(MAX_DECISIONS, sizeof(int));
             stateArray = calloc(MAX_DECISIONS, sizeof(char*));
@@ -302,7 +303,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                     else {
                         reward = 0;
                     }
-                    for (int i=0; stateArray[i] != NULL; i++) {
+                    for (int i=0; i < loc; i++) {
                         decisionmaker_update(decisionmaker, stateArray[i], actionArray[i], reward);
                     }
                 }
@@ -319,6 +320,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             else {
                 fprintf(stderr, "Invalid RESULT message received\n");
             }
+            game_count++;
         }
         else {
             // fprintf(stderr, "Received unfamiliar command\n");

@@ -101,6 +101,8 @@ void decisionmaker_delete(decisionmaker_t* decisionmaker) {
 
 /** Helper function for decisionmaker_save*/
 static void print_decisionmaker_item(void *arg, const char *key, void* item) {
+    // printf("printing data for key: %s\n", key);
+    // fflush(stdout);
     FILE* fp = (FILE*) arg;
     decision_outcomes_t* outcomes = (decision_outcomes_t*) item;
     fprintf(fp, "%s\n", key);
