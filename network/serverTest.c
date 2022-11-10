@@ -10,7 +10,7 @@
 char* hello = "Message receieved!\n"; 
 char buffer[1024] = { 0 };
 
-const int NUM_GAMES = 1000;
+const int NUM_GAMES = 100;
 
 
 typedef struct server_data {   // Structure declaration

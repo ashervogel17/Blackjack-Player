@@ -278,6 +278,15 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             char* suit = calloc(10, sizeof(char));
             if (sscanf(message, "CARD %s of %s", rank, suit) != 2) {
                 fprintf(stderr, "Invalid CARD message received\n");
+                free(rank);
+                free(suit);
+                for (int i=0; stateArray[i] != NULL; i++) {
+                    free(stateArray[i]);
+                }
+                free(actionArray);
+                free(stateArray);
+                handDelete(hand);
+                break;
             }
             card_t* card = cardNew(rank, suit);
             handAddCard(hand, card);
@@ -287,6 +296,15 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             char* suit = calloc(10, sizeof(char));
             if (sscanf(message, "DEALER %s of %s", dealerCard, suit) != 2) {
                 fprintf(stderr, "Invalid DEALER message received\n");
+                free(dealerCard);
+                free(suit);
+                for (int i=0; stateArray[i] != NULL; i++) {
+                    free(stateArray[i]);
+                }
+                free(actionArray);
+                free(stateArray);
+                handDelete(hand);
+                break;
             }
             free(suit);
         }
@@ -319,11 +337,27 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             }
             else {
                 fprintf(stderr, "Invalid RESULT message received\n");
+                for (int i=0; stateArray[i] != NULL; i++) {
+                    free(stateArray[i]);
+                }
+                free(dealerCard);
+                free(actionArray);
+                free(stateArray);
+                handDelete(hand);
+                break;
             }
             game_count++;
         }
         else {
-            // fprintf(stderr, "Received unfamiliar command\n");
+            fprintf(stderr, "Received unfamiliar command\n");
+            for (int i=0; stateArray[i] != NULL; i++) {
+                    free(stateArray[i]);
+            }
+            free(dealerCard);
+            free(actionArray);
+            free(stateArray);
+            handDelete(hand);
+            break;
         }
         if (strcmp(message, "QUIT") == 0) {
             free(message);
