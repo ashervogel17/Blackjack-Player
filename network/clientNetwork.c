@@ -83,7 +83,7 @@ void delay()
 	int c, d;
    
    	for (c = 1; c <= 32767; c++) {
-		for (d = 1; d <= 1000; d++) {
+		for (d = 1; d <= 3000; d++) {
 			;
 		}
 	}

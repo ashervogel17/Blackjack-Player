@@ -61,6 +61,15 @@ int main (const int argc, char* argv[]) {
     decisionmaker_t* decisionmaker = decisionmaker_load(*decisionmakerFilename);
     if (decisionmaker == NULL) {
         fprintf(stderr, "Unable to load decisionmaker. Initializing decisionmaker to empty\n");
+        free(*name);
+        free(name);
+        free(*IPAddress);
+        free(IPAddress);
+        free(port);
+        free(*decisionmakerFilename);
+        free(decisionmakerFilename);
+        free(isTraining);
+        return 0;
         decisionmaker = decisionmaker_new();
     }
 
@@ -289,6 +298,17 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                 break;
             }
             card_t* card = cardNew(rank, suit);
+            if (card == NULL) {
+                free(rank);
+                free(suit);
+                for (int i=0; stateArray[i] != NULL; i++) {
+                    free(stateArray[i]);
+                }
+                free(actionArray);
+                free(stateArray);
+                handDelete(hand);
+                break;
+            }
             handAddCard(hand, card);
         }
         else if (*message == 'D') {
@@ -348,6 +368,10 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             }
             game_count++;
         }
+        else if (strcmp(message, "QUIT") == 0) {
+            free(message);
+            break;
+        }
         else {
             fprintf(stderr, "Received unfamiliar command\n");
             for (int i=0; stateArray[i] != NULL; i++) {
@@ -359,10 +383,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             handDelete(hand);
             break;
         }
-        if (strcmp(message, "QUIT") == 0) {
-            free(message);
-            break;
-        }
+        
         if (message != NULL) {
             free(message);
         }
