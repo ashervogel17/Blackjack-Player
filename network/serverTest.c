@@ -48,7 +48,7 @@ int main(const int argc, char* argv[])
 
 
 
-    while (game_count < NUM_GAMES) {
+    while (true) {
 		// continnue game
 		if (*gameOnGoing) {
 			if (recv(new_socket, buffer, SIZE, 0) != 0){
@@ -60,6 +60,9 @@ int main(const int argc, char* argv[])
 		// new game
 		else {
 			game_count++;
+            if (game_count > NUM_GAMES) {
+                break;
+            }
 			printf("\n\n NEW GAME (#%d)\n\n", game_count);
 			deckDelete(deck);
 			handDelete(playerHand);

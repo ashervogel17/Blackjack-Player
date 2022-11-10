@@ -238,48 +238,50 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             handPrint(hand);
             printf("Dealer showing: %s\n", dealerCard);
             #endif
-            if (!isTraining) { // tournament mode
-                action = decisionmaker_decide(decisionmaker, state);
+            if (handGetValueOfHand(hand) >= 21) { 
+                action = 0;
+            }
+            else if (handGetValueOfHand(hand) <= 11) {
+                action = 1;
             }
             else {
-                playerHand = handSortedString(hand);
-
-                stateArray[loc] = malloc(sizeof(char)*(strlen(dealerCard)) + 1 + strlen(playerHand) + 1);
-                strcpy(stateArray[loc], dealerCard);
-                strcat(stateArray[loc], " ");
-                strcat(stateArray[loc], playerHand);
-
-                free(playerHand);
-
-                #ifdef DEBUG
-                printf("added state: %s\n\n", stateArray[loc]);
-                printf("all states:\n");
-                for (int i=0; i<=loc; i++) {
-                    printf("%s\n", stateArray[i]);
-                }
-                printf("\n");
-                #endif
-
-                if (handGetValueOfHand(hand) >= 21) { 
-                    action = 0;
-                }
-                else if (handGetValueOfHand(hand) <= 11) {
-                    action = 1;
-                }
-                else {
+                if (isTraining) { // training mode
                     action = rand() % 2;
                 }
-                actionArray[loc] = action;
-                loc++;
+                else { // tournament mode
+                    action = decisionmaker_decide(decisionmaker, state);
+                }
             }
+            
+            playerHand = handSortedString(hand);
+
+            stateArray[loc] = malloc(sizeof(char)*(strlen(dealerCard)) + 1 + strlen(playerHand) + 1);
+            strcpy(stateArray[loc], dealerCard);
+            strcat(stateArray[loc], " ");
+            strcat(stateArray[loc], playerHand);
+
+            free(playerHand);
+
+            #ifdef DEBUG
+            printf("added state: %s\n\n", stateArray[loc]);
+            printf("all states:\n");
+            for (int i=0; i<=loc; i++) {
+                printf("%s\n", stateArray[i]);
+            }
+            printf("\n");
+            #endif
             if (action == 0) {
-                send_message("STAND", new_socket);
+            send_message("STAND", new_socket);
             }
             else {
                 send_message("HIT", new_socket);
             }
-
+            
+            actionArray[loc] = action;
+            loc++;
         }
+        
+
         // message is either CARD, DEALER, or RESULT
         else if (*message == 'C') {
             // char* cardString = malloc(sizeof(char)*MAX_CARD_CHARS);
@@ -369,6 +371,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             game_count++;
         }
         else if (strcmp(message, "QUIT") == 0) {
+            printf("got quit message\n");
             free(message);
             break;
         }
@@ -388,7 +391,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             free(message);
         }
     }
-
+    printf("closing connection\n");
     terminate_client_connection(new_socket);
     #ifdef DEBUG
     printf("terminated connection\n");

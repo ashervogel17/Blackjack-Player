@@ -8,10 +8,11 @@
 
 # first run make
 
-for i in {1..50}
+for i in {1..100}
 do
+    echo "search me $i"
     ./player Asher 129.170.64.104 8094 ../data/training training
-    sleep 12
+    sleep 27
 done
 
 exit 0
