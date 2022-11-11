@@ -198,10 +198,11 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
     char* message = NULL; // string to receive message from server
 
     // messages to send to server
-    char* join = malloc(sizeof(char)*5);
+    char* join = malloc(sizeof(char)*(strlen("JOIN ") + strlen(name) + 1));
     char* hit = malloc(sizeof(char)*4);
     char* stand = malloc(sizeof(char)*6);
-    strncpy(join, "JOIN", strlen("JOIN") + 1);
+    strcpy(join, "JOIN ");
+    strcat(join, name);
     strncpy(hit, "HIT", strlen("HIT") + 1);
     strncpy(stand, "STAND", strlen("STAND") + 1);
 
@@ -432,6 +433,10 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
     terminate_client_connection(new_socket);
     free(hit);
     free(stand);
+    printf("%d %*s | %d %*s | %d %*s | %*s %f%s",
+        game_count, 5, "games", win_count, 5, "wins", push_count, 5, "pushes",
+        5, "win percentage:", (100*(float) win_count/(float) game_count), "%\n");
+    fflush(stdout);
     #ifdef DEBUG
     printf("terminated connection\n");
     fflush(stdout);

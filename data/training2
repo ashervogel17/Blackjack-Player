@@ -28,6 +28,8 @@ Five Two Three Four Ace
 0.000000 1.000000 0 1
 Ten Six Eight
 0.000000 -0.513333 0 300
+Three Nine
+-1.000000 0.000000 1 0
 Four Two Seven Nine
 0.000000 0.090909 0 11
 Four Three Three Six
@@ -47,7 +49,7 @@ Four Three Six Nine
 Three Six Ten
 0.000000 -0.298969 0 291
 Six Six Ten
-0.000000 -0.148437 0 256
+0.000000 -0.143968 0 257
 Six Four Five Five
 0.000000 0.333333 0 6
 Five Four Eight
@@ -111,9 +113,9 @@ Seven Two Two Three
 Five Two Three Three Seven
 0.000000 1.000000 0 1
 Ten Three Six Eight
-0.000000 -0.333333 0 45
+0.000000 -0.347826 0 46
 Three Six Eight
-0.000000 -0.114286 0 70
+0.000000 -0.098592 0 71
 Eight Two Two Three Ten
 0.000000 -1.000000 0 2
 Ace Two Two Three
@@ -155,7 +157,7 @@ Four Two Five Eight
 Two Four Seven Ace
 0.000000 -0.111111 0 9
 Ten Two Six
--0.259740 0.000000 308 0
+-0.262136 0.000000 309 0
 Ten Four Five Ace
 0.000000 0.580645 0 31
 Five Two Four Five Ten
@@ -241,7 +243,7 @@ Nine Two Two Six Ace
 Five Four Five Eight
 0.000000 0.000000 0 7
 Ten Four Ace
-0.000000 -0.494662 0 281
+0.000000 -0.489362 0 282
 Ten Two Two Seven Ace
 0.000000 -1.000000 0 4
 Ten Three Seven Nine
@@ -461,7 +463,7 @@ Three Two Four Five Ace
 Three Four Seven Ace
 0.000000 0.111111 0 9
 Two Seven Seven
-0.000000 -0.428571 0 28
+0.000000 -0.448275 0 29
 Eight Three Three Ace
 0.000000 -0.500000 0 2
 Two Four Seven
@@ -471,7 +473,7 @@ Ten Two Three Four Ace
 Nine Two Three Three Six
 0.000000 -1.000000 0 1
 Ace Two Ten
-0.000000 -0.748148 0 270
+0.000000 -0.749077 0 271
 Eight Four Five Six
 0.000000 -0.900000 0 20
 Seven Two Two Three Three Nine
@@ -489,7 +491,7 @@ Six Six Ace
 Ten Two Three Four Nine
 0.000000 -0.500000 0 4
 Eight Eight Eight
-0.000000 -0.473684 0 19
+0.000000 -0.400000 0 20
 Five Three Three
 -0.160000 0.000000 25 0
 Ten Three Seven Ace
@@ -697,7 +699,7 @@ Two Three Three Ace
 Seven Three Six Seven
 0.000000 -0.142857 0 14
 Seven Two Three Ten
-0.000000 -0.812500 0 32
+0.000000 -0.818182 0 33
 Two Two Three Nine
 0.000000 -0.500000 0 12
 Three Two Three Six
@@ -713,7 +715,7 @@ Ace Two Two Three Five
 Five Two Four Four
 0.500000 0.000000 6 0
 Seven Two Three
--0.281250 0.000000 96 0
+-0.288660 0.000000 97 0
 Three Two Three Four Eight
 0.000000 -0.333333 0 3
 Three Two Two Ten
@@ -823,7 +825,7 @@ Three Two Four Five Eight
 Ace Four Four Ace
 0.000000 -1.000000 0 1
 Six Eight Nine
-0.000000 0.192771 0 83
+0.000000 0.178571 0 84
 Nine Four Four Eight
 0.000000 -1.000000 0 1
 Six Five Six Ace
@@ -883,13 +885,13 @@ Four Three Six
 Six Five Five Five
 0.000000 -1.000000 0 3
 Nine Six Seven
-0.000000 -0.440860 0 93
+0.000000 -0.446808 0 94
 Seven Two Three Three Eight
 0.000000 -1.000000 0 1
 Four Five Seven
 0.000000 -0.200000 0 90
 Ten Six Nine
-0.000000 -0.592857 0 280
+0.000000 -0.594306 0 281
 Two Four Six Ace
 0.000000 1.000000 0 9
 Two Two Four Six
@@ -929,9 +931,9 @@ Eight Three Five Six
 Six Five Six Seven
 0.000000 0.250000 0 8
 Three Three Eight Eight
-0.000000 1.000000 0 1
+0.000000 1.000000 0 2
 Five Six Ten
-0.000000 -0.294118 0 255
+0.000000 -0.296875 0 256
 Three Three Five Seven
 0.000000 -0.000000 0 8
 Four Three Three Three
@@ -1043,7 +1045,7 @@ Ten Three Six Seven
 Ten Four Five Nine
 0.000000 -0.307692 0 13
 Ace Seven Ace
-0.000000 -0.380000 0 50
+0.000000 -0.352941 0 51
 Eight Two Two Four Ten
 0.000000 0.250000 0 4
 Five Two Two Three Ace
@@ -1067,7 +1069,7 @@ Nine Two Two Four Seven
 Ace Three Five
 -0.550725 0.000000 69 0
 Five Ten Ten
-0.000000 0.662768 0 513
+0.000000 0.663424 0 514
 Eight Five Six Seven
 0.000000 0.125000 0 8
 Two Four Six Six
@@ -1179,7 +1181,7 @@ Nine Three Three Five Eight
 Four Six Ten
 0.000000 -0.184713 0 314
 Nine Three Eight
-0.160494 0.000000 81 0
+0.146342 0.000000 82 0
 Five Five Six Ace
 0.000000 -0.200000 0 5
 Five Five Five Eight
@@ -1271,7 +1273,7 @@ Ace Two Three Ten
 Four Two Three Three
 0.000000 0.000000 8 0
 Five Two Five
-0.076923 0.000000 52 0
+0.056604 0.000000 53 0
 Four Two Three Five Six
 0.000000 -0.500000 0 4
 Ten Two Two Two Three Ten
@@ -1291,7 +1293,7 @@ Ace Five Six Ten
 Nine Two Six Ten
 0.000000 -0.160000 0 25
 Two Three Ten
-0.000000 -0.403077 0 325
+0.000000 -0.404908 0 326
 Nine Two Four Five Six
 0.000000 -0.666667 0 3
 Three Two Seven Seven
@@ -1405,7 +1407,7 @@ Six Two Two Two Three
 Nine Two Two Three Four Ten
 0.000000 0.500000 0 2
 Four Five Ten
-0.000000 -0.226586 0 331
+0.000000 -0.222891 0 332
 Ten Three Seven Ten
 0.000000 0.494505 0 91
 Eight Two Three Four Seven
@@ -1435,7 +1437,7 @@ Ace Four Seven Ace
 Ace Two Three Four Eight
 0.000000 -1.000000 0 2
 Six Four Ten
-0.000000 -0.126100 0 341
+0.000000 -0.128655 0 342
 Five Four Seven Nine
 0.000000 0.700000 0 10
 Ten Four Six Seven
@@ -1499,7 +1501,7 @@ Ace Three Three Ten
 Two Two Nine Ten
 0.000000 0.789474 0 19
 Ten Four Six
--0.116352 0.000000 318 0
+-0.112499 0.000000 320 0
 Nine Five Ten
 0.000000 -0.570997 0 331
 Three Two Five
@@ -1537,7 +1539,7 @@ Eight Two Five Seven
 Nine Two Three Four Six
 0.000000 0.500000 0 4
 Ten Two Six Ten
-0.000000 -0.082474 0 97
+0.000000 -0.091837 0 98
 Ace Two Seven Ten
 0.000000 -0.040000 0 25
 Five Three Three Five Nine
@@ -1659,7 +1661,7 @@ Three Two Nine
 Nine Two Two Three Three Seven
 0.000000 1.000000 0 1
 Ten Two Eight
--0.079511 0.000000 327 0
+-0.076220 0.000000 328 0
 Nine Two Five Six
 0.000000 -0.578947 0 19
 Nine Two Four Five Nine
@@ -1755,7 +1757,7 @@ Seven Two Five Five
 Seven Four Seven Ace
 0.000000 0.000000 0 2
 Nine Eight Ten
-0.000000 -0.253012 0 332
+0.000000 -0.255255 0 333
 Five Three Seven
 0.430555 0.000000 72 0
 Five Two Two Six Nine
@@ -1871,7 +1873,7 @@ Three Two Two Nine
 Three Five Five Six
 0.000000 0.333333 0 6
 Seven Three Ace
-0.000000 -0.581395 0 86
+0.000000 -0.586206 0 87
 Nine Three Three Five Ten
 0.000000 0.750000 0 4
 Eight Three Five Ten
@@ -1951,7 +1953,7 @@ Six Three Four Ace
 Six Two Two Six Eight
 0.000000 1.000000 0 3
 Ten Nine Ten
-0.000000 0.051823 0 1042
+0.000000 0.052732 0 1043
 Eight Two Two Four Six
 0.000000 -1.000000 0 1
 Eight Two Eight Eight
@@ -2007,7 +2009,7 @@ Eight Two Two Five Six
 Three Five Five Seven
 0.000000 -0.333333 0 3
 Ten Three Six
--0.168141 0.000000 339 0
+-0.173020 0.000000 341 0
 Eight Three Four Five
 0.000000 -0.100000 0 20
 Four Three Three Four Seven
@@ -2121,7 +2123,7 @@ Seven Five Five Ten
 Two Three Three Three Seven
 0.000000 -1.000000 0 1
 Ten Four Six Ace
-0.000000 0.952381 0 21
+0.000000 0.954545 0 22
 Three Four Five Nine
 0.000000 0.250000 0 4
 Ten Two Five Ace
@@ -2207,7 +2209,7 @@ Nine Two Seven
 Nine Four Four Nine
 0.000000 -1.000000 0 1
 Ten Ten Ace
-0.000000 0.908649 0 1029
+0.000000 0.908738 0 1030
 Ten Two Two Five Ten
 0.000000 0.333333 0 9
 Six Three Three Four Ten
@@ -2397,7 +2399,7 @@ Seven Two Four Ace
 Four Eight Eight
 0.000000 -0.666667 0 18
 Ten Three Six Six
-0.000000 -0.500000 0 20
+0.000000 -0.523810 0 21
 Two Two Three Ace
 0.000000 -0.200000 0 5
 Ace Two Three Four
@@ -2431,7 +2433,7 @@ Three Two Four Five Ten
 Two Two Five Ten
 0.000000 -0.052632 0 19
 Nine Seven Ten
-0.000000 -0.352113 0 284
+0.000000 -0.347369 0 285
 Seven Three Six Ten
 0.000000 0.812500 0 32
 Two Two Six Seven
@@ -2538,6 +2540,8 @@ Nine Two Three Seven
 0.000000 -0.571429 0 14
 Ace Five Six Seven
 0.000000 0.500000 0 4
+Five Two Three Five Eight
+0.000000 -1.000000 0 1
 Two Two Five Seven
 0.000000 -0.333333 0 6
 Ten Two Three Five Six
@@ -2555,7 +2559,7 @@ Four Six Seven
 Seven Two Three Five Ten
 0.000000 1.000000 0 6
 Two Four Five
-0.024691 0.000000 81 0
+0.024390 0.000000 82 0
 Six Three Four Four Ten
 0.000000 1.000000 0 1
 Three Five Nine
@@ -2663,7 +2667,7 @@ Five Four Four Ten
 Eight Three Three Four
 0.000000 0.000000 4 0
 Eight Ten Ten
-0.000000 0.771543 0 499
+0.000000 0.772000 0 500
 Two Two Three Six Ten
 0.000000 1.000000 0 4
 Two Two Two Five Eight
@@ -2691,7 +2695,7 @@ Ten Two Two Three Five
 Seven Two Two Six Eight
 0.000000 1.000000 0 1
 Five Two Ten
-0.000000 -0.147436 0 312
+0.000000 -0.150160 0 313
 Four Three Three Four Ten
 0.000000 1.000000 0 1
 Three Two Four Four
@@ -2811,7 +2815,7 @@ Two Two Seven Seven
 Eight Two Six Seven
 0.000000 -0.800000 0 10
 Two Seven Ten
-0.000000 -0.159322 0 295
+0.000000 -0.151515 0 297
 Ten Three Four Five
 0.000000 -0.575758 0 66
 Nine Three Four Four Ace
@@ -2885,7 +2889,7 @@ Ten Two Six Nine
 Five Two Five Ten
 0.000000 0.125000 0 16
 Ten Seven Ten
-0.000000 -0.446494 0 1084
+0.000000 -0.446592 0 1086
 Ace Three Three Three
 -1.000000 0.000000 2 0
 Six Five Six Ten
@@ -2905,7 +2909,7 @@ Seven Two Four Five
 Six Three Four Ten
 0.000000 0.111111 0 36
 Three Three Eight Ten
-0.000000 0.785714 0 14
+0.000000 0.800000 0 15
 Three Three Three Ace
 0.000000 -1.000000 0 1
 Four Three Nine
@@ -3107,7 +3111,7 @@ Four Two Three Five Ten
 Seven Two Two Four Four
 0.000000 -0.600000 0 5
 Seven Six Ten
-0.000000 -0.450617 0 324
+0.000000 -0.452307 0 325
 Four Two Three Three Nine
 0.000000 1.000000 0 1
 Four Three Three Four
@@ -3131,7 +3135,7 @@ Seven Six Eight
 Five Two Two Three Four Ace
 0.000000 -1.000000 0 1
 Nine Four Eight
-0.000000 -0.413333 0 75
+0.000000 -0.421052 0 76
 Ten Two Four Four Four
 0.000000 -1.000000 0 1
 Ace Five Six Nine
@@ -3198,6 +3202,8 @@ Nine Four Five Nine
 0.000000 -0.600000 0 5
 Ten Two Ten
 0.000000 -0.514365 0 1079
+Seven Ten
+-1.000000 0.000000 1 0
 Seven Two Two Four Nine
 0.000000 0.250000 0 4
 Ace Two Eight Ten
@@ -3227,7 +3233,7 @@ Seven Two Nine Nine
 Four Four Five Ace
 0.000000 0.714286 0 7
 Five Four Nine
-0.000000 -0.269841 0 63
+0.000000 -0.281250 0 64
 Ten Two Two Five Nine
 0.000000 -0.600000 0 5
 Five Two Six Nine
@@ -3241,7 +3247,7 @@ Three Four Seven Ten
 Eight Two Two Two Five Ten
 0.000000 1.000000 0 1
 Ace Ten Ten
-0.000000 0.134269 0 499
+0.000000 0.136000 0 500
 Seven Three Three Eight
 0.000000 -0.600000 0 5
 Six Two Two Five Nine
@@ -3291,7 +3297,7 @@ Four Four Five
 Nine Two Two Three
 0.000000 0.000000 10 0
 Eight Four Eight
-0.000000 -0.534247 0 73
+0.000000 -0.540541 0 74
 Three Two Three Four
 0.235294 0.000000 17 0
 Nine Three Five
@@ -3407,7 +3413,7 @@ Ten Two Four Four Ten
 Nine Two Three Three Three Four
 0.000000 -1.000000 0 1
 Five Two Three Five
--0.100000 0.000000 10 0
+-0.181818 0.000000 11 0
 Ace Two Two Two Ten
 0.000000 -1.000000 0 1
 Seven Three Four Ace
@@ -3461,7 +3467,7 @@ Five Three Three Three
 Three Three Three Five
 -0.333333 0.000000 6 0
 Ten Six Ten
-0.000000 -0.539179 0 1072
+0.000000 -0.537745 0 1073
 Ten Two Seven Eight
 0.000000 -0.392157 0 51
 Five Five Six Ten
@@ -3497,7 +3503,7 @@ Four Four Six Seven
 Ace Four Seven Ten
 0.000000 0.550000 0 20
 Four Four Ten
-0.000000 -0.327189 0 217
+0.000000 -0.330275 0 218
 Nine Two Two
 -0.689655 0.000000 29 0
 Seven Two Two Five Eight
@@ -3577,7 +3583,7 @@ Eight Four Six
 Five Four Ace
 0.000000 -0.180328 0 61
 Seven Three Six
-0.344086 0.000000 93 0
+0.329787 0.000000 94 0
 Three Two Four Four Ten
 0.000000 1.000000 0 2
 Two Three Eight Nine
@@ -3607,7 +3613,7 @@ Two Two Three Five
 Three Three Three Four Five
 0.000000 -1.000000 0 1
 Six Ten Ten
-0.000000 0.653985 0 552
+0.000000 0.650994 0 553
 Nine Two Two Seven
 0.200000 0.000000 5 0
 Ace Four Five Ten
@@ -3693,7 +3699,7 @@ Two Three Three Six
 Five Six Six
 0.000000 -0.310345 0 29
 Four Five Eight
-0.000000 -0.146341 0 82
+0.000000 -0.132530 0 83
 Three Four Six Six
 0.000000 0.200000 0 5
 Six Three Ace
@@ -3915,7 +3921,7 @@ Ace Two Two Six
 Ace Three Five Ace
 0.000000 -0.333333 0 3
 Ten Four Six Ten
-0.000000 0.326923 0 104
+0.000000 0.323809 0 105
 Four Two Two Three Three Ten
 0.000000 1.000000 0 3
 Ten Three Eight Ten
@@ -4055,7 +4061,7 @@ Ace Three Five Nine
 Eight Two Two Seven
 0.000000 0.000000 4 0
 Two Four Five Ten
-0.000000 0.260870 0 23
+0.000000 0.250000 0 24
 Ten Two Three Five Nine
 0.000000 0.000000 0 8
 Two Ten Ten
@@ -4209,7 +4215,7 @@ Eight Two Three Ace
 Eight Two Three Three Three
 1.000000 0.000000 1 0
 Ten Two Eight Ten
-0.000000 0.333333 0 105
+0.000000 0.339622 0 106
 Ten Two Three Five Seven
 0.000000 -0.500000 0 8
 Nine Two Eight Ten
@@ -4291,7 +4297,7 @@ Ten Three Three Three
 Four Two Five
 0.009804 0.000000 102 0
 Five Seven Ten
-0.000000 0.007299 0 274
+0.000000 0.003636 0 275
 Two Seven Ace
 0.000000 0.276923 0 65
 Eight Two Six Eight
@@ -4333,7 +4339,7 @@ Nine Five Ace
 Nine Two Six
 -0.115385 0.000000 78 0
 Seven Three Four Six
-0.000000 -0.466667 0 15
+0.000000 -0.500000 0 16
 Three Two Three Nine
 0.000000 -0.333333 0 9
 Five Two Two Six Ten
@@ -4347,11 +4353,11 @@ Seven Two Three Three Three Ten
 Five Two Five Ace
 0.000000 0.500000 0 4
 Nine Three Three Eight
-0.000000 -0.600000 0 10
+0.000000 -0.636364 0 11
 Ten Three Three Five Nine
 0.000000 0.500000 0 4
 Three Three Eight
-0.326923 0.000000 52 0
+0.351852 0.000000 54 0
 Four Two Three Three Five
 0.000000 1.000000 0 1
 Six Three Eight
@@ -4707,7 +4713,7 @@ Ace Seven Eight
 Nine Three Five Five
 0.000000 -0.500000 0 8
 Ten Eight Ace
-0.000000 0.098655 0 223
+0.000000 0.102679 0 224
 Two Three Five Five
 0.000000 -0.272727 0 11
 Seven Four Four Seven
@@ -4749,7 +4755,7 @@ Ten Two Two Four Four
 Ten Two Four Seven
 0.000000 -0.478261 0 69
 Two Five Ten
-0.000000 -0.277592 0 299
+0.000000 -0.275748 0 301
 Five Six Ace
 0.000000 -0.079365 0 63
 Three Six Seven
@@ -4770,6 +4776,8 @@ Seven Three Seven Eight
 0.000000 0.285714 0 7
 Seven Three Eight
 0.383562 0.000000 73 0
+Eight Four
+-1.000000 0.000000 1 0
 Ten Two Ace
 0.000000 -0.569343 0 274
 Two Three Three Four
@@ -5033,7 +5041,7 @@ Nine Two Three Ten
 Eight Four Four
 -0.210526 0.000000 38 0
 Ten Five Seven
-0.000000 -0.459627 0 322
+0.000000 -0.461300 0 323
 Six Three Four Four
 0.666667 0.000000 3 0
 Ten Two Five Ten
