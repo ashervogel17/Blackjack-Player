@@ -32,6 +32,3 @@ clean:
 	rm -f decisionmaker_test
 	rm -f decisionmaker_test_data
 	rm -f core
-
-# test: player decisionmaker.o
-# 	bash -v testing.sh

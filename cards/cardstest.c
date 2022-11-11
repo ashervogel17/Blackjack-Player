@@ -1,9 +1,12 @@
-/* 
+/**
 * cardstest.c - test program for cards module 
 * includes unit tests of all methods and also 
 * functionality test for all methods working together 
 * as expected for dealer and player modules for blackjack project
 * 
+* compile for testing: mygcc -o cardstest cardstest.c cards.c -I../libcs50
+* test: ./cardstest 
+*
 * Rory Doyle, Nate Roe, Eli Rosenberg, Asher Vogel 
 * CS50, Fall 2022 
 */

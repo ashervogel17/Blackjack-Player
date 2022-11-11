@@ -9,15 +9,24 @@ Elias Rosenberg, 22F, CS50
 */
 
 #include <stddef.h>
+#include <time.h>
 
 #ifndef __SERVER_NETWORK_H
 #define __SERVER_NETWORK_H
+
 
 /*
 When we establish ther server, we need pointers to two important things: the actual socket object the server is listening on, as well as the socket descriptor
 - I never figured out what the socket descriptor actually does, but it is necessary for shutting down the server so we need it here. 
 */
 typedef struct server_data server_data_t; 
+
+
+/**
+ * Sleep for a given amount of time
+ * For this projects use, only the first time spec is used and set to 26ms, the second parameter can be NULL
+ * */
+int nanosleep(const struct timespec *req, struct timespec *rem);
 
 /*
 This method is called internally in establish_server_connection. It takes a pointer to the final socket the server will be listening on for messages and a pointer
@@ -78,11 +87,6 @@ If confused about any of this, please look at clientTest.c and serverTest.c to s
 
 */
 int send_message(const char* message, int new_socket); 
-
-/*
-We need our own implementation of a delay function 
-*/
-void delay();
 
 
 #endif //__SERVER_H

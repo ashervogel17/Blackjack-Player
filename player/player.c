@@ -26,7 +26,6 @@
 
 const int MAX_DECISIONS = 21;
 const int MAX_CARD_CHARS = 20;
-int* socketPointer; 
 
 static int parseArgs(const int argc, char* argv[], char** name, char** IPAddress, int* port,
     char** decisionmakerFilename, bool* isTraining);
@@ -69,25 +68,15 @@ int main (const int argc, char* argv[]) {
         free(*decisionmakerFilename);
         free(decisionmakerFilename);
         free(isTraining);
+        // decisionmaker_delete(decisionmaker);
         return 0;
-        decisionmaker = decisionmaker_new();
     }
 
     // play the game
     play(*isTraining, decisionmaker, *name, *IPAddress, *port, *decisionmakerFilename);
 
-    #ifdef DEBUG
-    printf("out of play function\n");
-    fflush(stdout);
-    #endif
-
     // save decisionmaker to memory
     decisionmaker_save(decisionmaker, *decisionmakerFilename);
-
-    #ifdef DEBUG
-    printf("saved decisionmaker to disk\n");
-    fflush(stdout);
-    #endif
 
     // clean up
     free(*name);
@@ -201,32 +190,37 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
     char** stateArray = NULL;
     int loc;
     int reward;
-    hand_t* hand;
-    int game_count = 1;
+    hand_t* hand; // player hand
+    int game_count = 0;
+    int win_count = 0;
+    int push_count = 0;
+    int loss_count = 0;
+    char* message = NULL; // string to receive message from server
 
-    // establish connection to server
-    socketPointer = establish_client_connection(IPAddress, port);
+    // messages to send to server
+    char* join = malloc(sizeof(char)*5);
+    char* hit = malloc(sizeof(char)*4);
+    char* stand = malloc(sizeof(char)*6);
+    strncpy(join, "JOIN", strlen("JOIN") + 1);
+    strncpy(hit, "HIT", strlen("HIT") + 1);
+    strncpy(stand, "STAND", strlen("STAND") + 1);
+
+    // establish connection to server and send join message
+    int* socketPointer = establish_client_connection(IPAddress, port);
     int new_socket = *socketPointer; 
-    char* message = "start";
-    int sent_join_message = -1;
+    send_message(join, new_socket); 
+    free(join);
+    
+    // int sent_join_message = -1;
     
     // main while loop
     while (true) {
-        message = calloc(50, sizeof(char));
-
-        // send join message if needed
-        if (sent_join_message != 0) {
-            sent_join_message = send_message("JOIN", new_socket); 
-        }
-        #ifdef DEBUG
-        printf("listening for message\n");
-        #endif
-        delay(26);
-        receive_message(new_socket, 1024, message); 
+        message = malloc(500*sizeof(char));
+        receive_message(new_socket, 500, message); 
 
         // handle message
         if (strcmp(message, "BEGIN") == 0) {
-            printf("\n\n NEW GAME (#%d)\n\n", game_count);
+            // printf("\n\n NEW GAME (#%d)\n\n", game_count);
             hand = handNew();
             actionArray = calloc(MAX_DECISIONS, sizeof(int));
             stateArray = calloc(MAX_DECISIONS, sizeof(char*));
@@ -271,10 +265,10 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             printf("\n");
             #endif
             if (action == 0) {
-            send_message("STAND", new_socket);
+                send_message(stand, new_socket);
             }
             else {
-                send_message("HIT", new_socket);
+                send_message(hit, new_socket);
             }
             
             actionArray[loc] = action;
@@ -297,7 +291,9 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                 free(actionArray);
                 free(stateArray);
                 handDelete(hand);
-                break;
+                free(hit);
+                free(stand);
+                exit(1);
             }
             card_t* card = cardNew(rank, suit);
             if (card == NULL) {
@@ -309,9 +305,13 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                 free(actionArray);
                 free(stateArray);
                 handDelete(hand);
-                break;
+                free(hit);
+                free(stand);
+                exit(1);
             }
             handAddCard(hand, card);
+            free(rank);
+            free(suit);
         }
         else if (*message == 'D') {
             dealerCard = calloc(10, sizeof(char));
@@ -326,26 +326,48 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                 free(actionArray);
                 free(stateArray);
                 handDelete(hand);
-                break;
+                free(hit);
+                free(stand);
+                exit(1);
             }
+            card_t* dealerCardStruct = cardNew(dealerCard, suit);
+            if (dealerCardStruct == NULL) {
+                fprintf(stderr, "Invalid DEALER message received\n");
+                free(dealerCard);
+                free(suit);
+                for (int i=0; stateArray[i] != NULL; i++) {
+                    free(stateArray[i]);
+                }
+                free(actionArray);
+                free(stateArray);
+                handDelete(hand);
+                free(hit);
+                free(stand);
+                exit(1);
+            }
+            cardDelete(dealerCardStruct);
             free(suit);
         }
         else if (*message == 'R') {
-            if (strcmp(message, "RESULT WIN") == 0 || strcmp(message, "RESULT LOSE") == 0 || strcmp(message, "RESULT PUSH") == 0) {
-                // if training, update average rewards
-                if (isTraining) {
-                    if (strcmp(message, "RESULT WIN") == 0) {
-                        reward = 1; 
-                    }
-                    else if (strcmp(message, "RESULT LOSE") == 0) {
-                        reward = -1;
-                    }
-                    else {
-                        reward = 0;
-                    }
-                    for (int i=0; i < loc; i++) {
-                        decisionmaker_update(decisionmaker, stateArray[i], actionArray[i], reward);
-                    }
+            if (strcmp(message, "RESULT WIN") == 0 || strcmp(message, "RESULT LOOSE") == 0 || strcmp(message, "RESULT PUSH") == 0) {
+                // update average rewards
+                if (strcmp(message, "RESULT WIN") == 0) {
+                    reward = 1; 
+                    printf("Win\n");
+                    win_count += 1;
+                }
+                else if (strcmp(message, "RESULT LOOSE") == 0) {
+                    reward = -1;
+                    printf("Lose\n");
+                    loss_count += 1;
+                }
+                else {
+                    reward = 0;
+                    printf("Push\n");
+                    push_count += 1;
+                }
+                for (int i=0; i < loc; i++) {
+                    decisionmaker_update(decisionmaker, stateArray[i], actionArray[i], reward);
                 }
 
                 // free memory
@@ -366,7 +388,9 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                 free(actionArray);
                 free(stateArray);
                 handDelete(hand);
-                break;
+                free(hit);
+                free(stand);
+                exit(1);
             }
             game_count++;
         }
@@ -376,7 +400,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             break;
         }
         else {
-            fprintf(stderr, "Received unfamiliar command\n");
+            fprintf(stderr, "Received unfamiliar command: %s\n", message);
             for (int i=0; stateArray[i] != NULL; i++) {
                     free(stateArray[i]);
             }
@@ -384,7 +408,9 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             free(actionArray);
             free(stateArray);
             handDelete(hand);
-            break;
+            free(hit);
+            free(stand);
+            exit(1);
         }
         
         if (message != NULL) {
@@ -392,7 +418,10 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
         }
     }
     printf("closing connection\n");
+    printf("Out of %d games, we won %d, pushed %d, and lost %d.\n", game_count, win_count, push_count, loss_count);
     terminate_client_connection(new_socket);
+    free(hit);
+    free(stand);
     #ifdef DEBUG
     printf("terminated connection\n");
     fflush(stdout);

@@ -1,0 +1,53 @@
+==1209612== Memcheck, a memory error detector
+==1209612== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==1209612== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==1209612== Command: ./player Asher 129.170.64.104 8094 ../data/training
+==1209612== 
+==1209612== Syscall param sendto(s) contains uninitialised byte(s)
+==1209612==    at 0x49B3A60: send (send.c:28)
+==1209612==    by 0x10CD09: send_message (clientNetwork.c:57)
+==1209612==    by 0x10A18B: play (player.c:211)
+==1209612==    by 0x109B9C: main (player.c:76)
+==1209612== 
+==1209612== Syscall param read(fd) contains uninitialised byte(s)
+==1209612==    at 0x49A0992: read (read.c:26)
+==1209612==    by 0x10CD7F: receive_message (clientNetwork.c:72)
+==1209612==    by 0x10A1BB: play (player.c:219)
+==1209612==    by 0x109B9C: main (player.c:76)
+==1209612== 
+==1209612== Syscall param sendto(s) contains uninitialised byte(s)
+==1209612==    at 0x49B3A60: send (send.c:28)
+==1209612==    by 0x10CD09: send_message (clientNetwork.c:57)
+==1209612==    by 0x10A3BE: play (player.c:268)
+==1209612==    by 0x109B9C: main (player.c:76)
+==1209612== 
+==1209612== Syscall param sendto(s) contains uninitialised byte(s)
+==1209612==    at 0x49B3A60: send (send.c:28)
+==1209612==    by 0x10CD09: send_message (clientNetwork.c:57)
+==1209612==    by 0x10A3D4: play (player.c:271)
+==1209612==    by 0x109B9C: main (player.c:76)
+==1209612== 
+==1209612== Syscall param close(fd) contains uninitialised byte(s)
+==1209612==    at 0x49A1117: close (close.c:27)
+==1209612==    by 0x10CDAC: terminate_client_connection (clientNetwork.c:82)
+==1209612==    by 0x10ACD6: play (player.c:422)
+==1209612==    by 0x109B9C: main (player.c:76)
+==1209612== 
+Lose
+Lose
+Lose
+Win
+Win
+got quit message
+closing connection
+Out of 5 games, we won 2, pushed 0, and lost 3.
+==1209612== 
+==1209612== HEAP SUMMARY:
+==1209612==     in use at exit: 0 bytes in 0 blocks
+==1209612==   total heap usage: 6,526,942 allocs, 6,526,942 frees, 105,309,374 bytes allocated
+==1209612== 
+==1209612== All heap blocks were freed -- no leaks are possible
+==1209612== 
+==1209612== Use --track-origins=yes to see where uninitialised values come from
+==1209612== For lists of detected and suppressed errors, rerun with: -s
+==1209612== ERROR SUMMARY: 41 errors from 5 contexts (suppressed: 0 from 0)

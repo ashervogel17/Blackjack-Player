@@ -1,36 +1,33 @@
-# Makefile for CS50 cards final project module
+# Makefile for 'dealer' module
 #
-# Nathaniel Roe 
+# Rory Doyle, the man
 # CS 50, Fall 2022
 
-# uncomment the following to turn on verbose memory logging
-#TESTING= -DMEMTEST
+OBJS = dealer.o ../cards/cards.o ../network/serverNetwork.o
+L1 = ../libcs50
+L2 = ../network
+LIBS = $(L1)/libcs50-given.a $(L2)/network.a
 
-#MISC. TEST CASES FOR FXNS
-#TESTING=-DAPPTEST
-L = ../../libcs50
-LIBS = $L/libcs50.a
-CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I$L
+
+
+
+CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I$(L1) -I$(L2)
 CC = gcc
-PROG = dealer
 MAKE = make
+# for memory-leak tests
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
-OBJS = dealer.o ../cards/cards.o
 
-.PHONY: all clean 
-
-#makes indexerand indextest
-all: dealer
-
-$(PROG): $(OBJS) $(LIBS)
+dealer: $(OBJS) $(LIBS)
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
-# object files depend on header files
+dealer.o: ../cards/cards.h ../network/serverNetwork.h
+./cards/cards.o: ../cards/cards.h
+../network/serverNetwork.o: ../network/serverNetwork.h
 
-dealer.o: dealer.c
-../cards/cards.o: ../cards/cards.c
+.PHONY: clean
 
-clean: 
-	rm -f $(PROG)
+clean:
+	rm -rf *.dSYM  # MacOS debugger info
 	rm -f *~ *.o
-	rm -rf *.dSYM
+	rm -f dealer
+	rm -f core

@@ -1,3 +1,11 @@
+/**
+ * Test file for serverNetwork.c
+ * 
+ * compile for testing: mygcc -o server serverTest.c serverNetwork.c ../cards/cards.c
+ * 
+ * Written by Eli Rosenberg, Asher Vogel, Rory Doyle, and Nate Roe
+ * */
+
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +18,7 @@
 char* hello = "Message receieved!\n"; 
 char buffer[1024] = { 0 };
 
-const int NUM_GAMES = 100;
+const int NUM_GAMES = 5;
 
 
 typedef struct server_data {   // Structure declaration
@@ -56,6 +64,10 @@ int main(const int argc, char* argv[])
 				printf("%s\n", buffer);
 				parseServerMessage(buffer, new_socket, deck, dealerHand, playerHand, gameOnGoing); //we set game
 			}
+            else {
+                printf("something went wrong. rebooting\n");
+                break;
+            }
 		}
 		// new game
 		else {
@@ -68,9 +80,7 @@ int main(const int argc, char* argv[])
 			handDelete(playerHand);
 			handDelete(dealerHand);
 			deck = deckNew();
-            for (int i=0; i<3; i++) {
-                deckShuffle(deck);
-            }
+            deckShuffle(deck);
 			dealerHand = handNew();
 			playerHand = handNew();
 			parseServerMessage(buffer, new_socket, deck, dealerHand, playerHand, gameOnGoing);
@@ -143,7 +153,7 @@ void parseServerMessage(char* buffer, int new_socket, deck_t* deck, hand_t* deal
 		// check if player busted
 		if (handGetValueOfHand(playerHand) > 21) { // bust
 			printf("\nPlayer busted\n");
-			send_message("RESULT LOSE", new_socket);
+			send_message("RESULT LOOSE", new_socket);
 			*gameOnGoing = false;
 		}
 		else { // send card message
@@ -172,7 +182,7 @@ void parseServerMessage(char* buffer, int new_socket, deck_t* deck, hand_t* deal
 			send_message("RESULT PUSH", new_socket);
 		}
 		else {
-			send_message("RESULT LOSE", new_socket);
+			send_message("RESULT LOOSE", new_socket);
 		}
 		*gameOnGoing = false;
 	}

@@ -24,3 +24,5 @@ clean:
 	rm -f $(LIB)
 	rm -f *~ *.o
 	rm -rf *.dSYM
+	rm -f client
+	rm -f server

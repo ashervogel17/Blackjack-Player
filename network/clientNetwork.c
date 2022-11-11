@@ -1,5 +1,11 @@
-// Client side C/C++ program to demonstrate Socket
-// programming
+/*
+Implementation of header file for clientNetwork.h. We simply provide wrapper functions for the functions given by arap/inet.h and sys/socket.h
+The core of the code was gotten from. 
+
+Elias Rosenberg, CS50, 22F
+*/
+
+
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,11 +18,10 @@
 
 int* establish_client_connection(char* IPAddress, int PORT)
 {
-	int sock= 0, client_fd;
+	int sock, client_fd;
 	struct sockaddr_in serv_addr;
-	//char* hello = "Hello from client";
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) { //create the socket object
-		printf("\n Socket creation error \n");
+		//printf("\n Socket creation error \n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -27,8 +32,7 @@ int* establish_client_connection(char* IPAddress, int PORT)
 	// form
 	if (inet_pton(AF_INET, IPAddress, &serv_addr.sin_addr)
 		<= 0) {
-		printf(
-			"\nInvalid address/ Address not supported \n");
+	//printf("\nInvalid address/ Address not supported \n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -36,34 +40,37 @@ int* establish_client_connection(char* IPAddress, int PORT)
 		= connect(sock, (struct sockaddr*)&serv_addr, //connect this socket to the PORT and IPAddress
 				sizeof(serv_addr)))
 		< 0) {
-		printf("\nConnection Failed \n");
+		//printf("\nConnection Failed \n");
 		exit(EXIT_FAILURE);
 	}
-	//printf("Client sucessfully connected to socket %d over port: %d\n", client_fd, PORT);
-
-	int* socketPointer = &sock;  
-
+	int* socketPointer = NULL;
+	socketPointer = &sock;  
 	return socketPointer;  
 }
 
 
-int send_message(const char* message, int new_socket){ 
-	delay();
+int send_message(const char* message, int new_socket){
+	struct timespec tim;
+	tim.tv_sec = 0;
+	tim.tv_nsec = 26000000;
+	
 	if (send(new_socket, message, strlen(message) + 1, 0) != -1){
-		printf("message sent %s\n", message); 
+		// printf("message sent %s\n", message); 
+		nanosleep(&tim, NULL);
 		return 0; 
-	}else{
-
-		printf("message not sent!!\n"); 
 	}
+	else{
+		// printf("message not sent!!\n"); 
+	}
+	nanosleep(&tim, NULL);
 	return 1; 
 	//message not sent 
 }
 
 
 int receive_message(int sock, size_t nbytes, char* buffer){
-	if (read(sock, buffer, 1024) != -1){
-		printf("message received: %s\n", buffer); //we read the response on the socket. 
+	if (read(sock, buffer, nbytes) != -1){
+		//printf("message received: %s\n", buffer); //we read the response on the socket. 
 		return 0; 
 	} 
 	return 1; 
@@ -73,18 +80,4 @@ int receive_message(int sock, size_t nbytes, char* buffer){
 void terminate_client_connection(int client_fd){
 	// closing the connected socket
 	close(client_fd); 
-}
-
-
-
-
-void delay()
-{
-	int c, d;
-   
-   	for (c = 1; c <= 32767; c++) {
-		for (d = 1; d <= 5000; d++) {
-			;
-		}
-	}
 }

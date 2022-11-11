@@ -10,11 +10,18 @@ called terminate_client_connection
 
 Elias Rosenberg, 22F, CS50
 */
+#include <time.h>
+
 #ifndef __CLIENT_NETWORK_H
 #define __CLIENT_NETWORK_H
 
 
 
+/**
+ * Sleep for a given amount of time
+ * For this projects use, only the first time spec is used and set to 26ms, the second parameter can be NULL
+ * */
+int nanosleep(const struct timespec *req, struct timespec *rem);
 
 /*
 The caller provides: 
@@ -73,10 +80,5 @@ Calls the module function send()
 
 */
 int send_message(const char* message, int new_socket); 
-
-/*
-We need our own implementation of a delay function 
-*/
-void delay();
 
 #endif //__SERVER_H

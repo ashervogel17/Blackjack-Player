@@ -7,9 +7,6 @@
 OBJS = cardstest.o cards.o 
 LIBS = ../libcs50/libcs50-given.a
 
-
-
-
 CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I../libcs50
 CC = gcc
 MAKE = make
@@ -20,12 +17,12 @@ cardstest: $(OBJS)
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
 cardstest.o: cards.h ../libcs50/counters.h
-card.o: cards.h
+cards.o: cards.h
 
 .PHONY: clean
 
 clean:
 	rm -rf *.dSYM  # MacOS debugger info
 	rm -f *~ *.o
-	rm -f bagtest
+	rm -f cardstest
 	rm -f core

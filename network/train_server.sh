@@ -11,10 +11,10 @@
 # make
 # mygcc -o server serverTest.c serverNetwork.c ../cards/cards.c
 
-for i in {1..100}
+for i in {1..20}
 do
     ./server
-    sleep 25
+    sleep 30
 done
 
 exit 0

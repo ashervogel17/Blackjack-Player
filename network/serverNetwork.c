@@ -1,5 +1,10 @@
-// Server side C/C++ program to demonstrate Socket
-// programming
+/*
+Implementation of header file serverNetwork.h. Codes wrapper functions for imported modules arpa/inet.h and sys/socket.h. 
+
+Elias Rosenberg, CS50, 22F
+
+
+*/
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,10 +12,9 @@
 #include <sys/socket.h>
 #include "serverNetwork.h"
 #include <stddef.h>
-#define _BSD_SOURCE
 #include <unistd.h>
 #include <time.h>
-#define EXAMPLE_PORT 8093
+#define EXAMPLE_PORT 8094
 
 typedef struct server_data {   // Structure declaration
   int* socket;           // pointer to listen to the proper socket
@@ -91,21 +95,26 @@ void terminate_server_connection(server_data_t* data){
 }
 
 int send_message(const char* message, int new_socket){
-	delay();
-	if (send(new_socket, message, strlen(message), 0) != -1){
-		printf("message sent %s\n", message); 
+	struct timespec tim;
+	tim.tv_sec = 2;
+	tim.tv_nsec = 500000000;
+	
+	if (send(new_socket, message, strlen(message) + 1, 0) != -1){
+		// printf("message sent %s\n", message); 
+		nanosleep(&tim, NULL);
 		return 0; 
 	}
 	else{
-		printf("message not sent!!\n"); 
+		// printf("message not sent!!\n"); 
 	}
+	nanosleep(&tim, NULL);
 	return 1; 
 	//message not sent 
 }
 
 
 int receive_message(int sock, size_t nbytes, char *buffer){
-	if (read(sock, buffer, 1024) != -1){
+	if (read(sock, buffer, nbytes) != -1){
 		printf("message received: %s\n", buffer); //we read the response on the socket. 
 		return 0; 
 	} 
@@ -115,15 +124,4 @@ int receive_message(int sock, size_t nbytes, char *buffer){
 		return 1; 
 	}
 	return 1; 
-}
-
-void delay()
-{
-	int c, d;
-   
-   	for (c = 1; c <= 32767; c++) {
-		for (d = 1; d <= 5000; d++) {
-			;
-		}
-	}
 }
