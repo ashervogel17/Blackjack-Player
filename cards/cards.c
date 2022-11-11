@@ -301,6 +301,9 @@ char* handSortedString(hand_t* hand) {
       if (hand->cards[j]->value < nextCardVal) {
         nextCardVal = hand->cards[j]->value;
         strcpy(nextCard, hand->cards[j]->rank);
+        if (strcmp(nextCard, "Jack") == 0 || strcmp(nextCard, "Queen") == 0 || strcmp(nextCard, "King") == 0) {
+          strcpy(nextCard, "Ten");
+        }
         nextCardIndex = j;
       }
     }

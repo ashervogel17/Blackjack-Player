@@ -5,7 +5,7 @@
 * as expected for dealer and player modules for blackjack project
 * 
 * compile for testing: mygcc -o cardstest cardstest.c cards.c -I../libcs50
-* test: ./cardstest 
+* test: myvalgrind ./cardstest 
 *
 * Rory Doyle, Nate Roe, Eli Rosenberg, Asher Vogel 
 * CS50, Fall 2022 
@@ -121,12 +121,12 @@ int test_handFunctions() {
     EXPECT(handAddCard(hand, card3) == true);
     EXPECT(handGetValueOfHand(hand) == 18);
     char* hand3Str = handSortedString(hand);
-    EXPECT(strcmp(hand3Str, "Seven Jack Ace") == 0);
+    EXPECT(strcmp(hand3Str, "Seven Ten Ace") == 0);
 
     EXPECT(handAddCard(hand, card4) == true);
     EXPECT(handGetValueOfHand(hand) == 19);
     char* hand4Str = handSortedString(hand);
-    EXPECT(strcmp(hand4Str, "Seven Jack Ace Ace") == 0);
+    EXPECT(strcmp(hand4Str, "Seven Ten Ace Ace") == 0);
 
     printf("Built hand: \n");
     handPrint(hand);

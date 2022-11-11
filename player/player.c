@@ -232,7 +232,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             handPrint(hand);
             printf("Dealer showing: %s\n", dealerCard);
             #endif
-            if (handGetValueOfHand(hand) >= 21) { 
+            if (handGetValueOfHand(hand) >= 19) { 
                 action = 0;
             }
             else if (handGetValueOfHand(hand) <= 11) {
@@ -330,6 +330,9 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                 free(stand);
                 exit(1);
             }
+            if (strcmp(dealerCard, "Jack") == 0 || strcmp(dealerCard, "Queen") == 0 || strcmp(dealerCard, "King") == 0) {
+                    strcpy(dealerCard, "Ten");
+                }
             card_t* dealerCardStruct = cardNew(dealerCard, suit);
             if (dealerCardStruct == NULL) {
                 fprintf(stderr, "Invalid DEALER message received\n");
@@ -349,25 +352,33 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
             free(suit);
         }
         else if (*message == 'R') {
-            if (strcmp(message, "RESULT WIN") == 0 || strcmp(message, "RESULT LOOSE") == 0 || strcmp(message, "RESULT PUSH") == 0) {
+            if (strcmp(message, "RESULT WIN") == 0 || strcmp(message, "RESULT LOOSE") == 0 || strcmp(message, "RESULT PUSH") == 0 || strcmp(message, "RESULT BUST") == 0) {
                 // update average rewards
+                game_count++;
                 if (strcmp(message, "RESULT WIN") == 0) {
                     reward = 1; 
-                    printf("Win\n");
+                    // printf("Win\n");
                     win_count += 1;
                 }
-                else if (strcmp(message, "RESULT LOOSE") == 0) {
+                else if (strcmp(message, "RESULT LOOSE") == 0 || strcmp(message, "RESULT BUST") == 0) {
                     reward = -1;
-                    printf("Lose\n");
+                    // printf("Lose\n");
                     loss_count += 1;
                 }
                 else {
                     reward = 0;
-                    printf("Push\n");
+                    // printf("Push\n");
                     push_count += 1;
                 }
                 for (int i=0; i < loc; i++) {
                     decisionmaker_update(decisionmaker, stateArray[i], actionArray[i], reward);
+                }
+                
+                if (game_count % 1000 == 0) {
+                    printf("%d %*s | %d %*s | %d %*s | %*s %f%s",
+                        game_count, 5, "games", win_count, 5, "wins", push_count, 5, "pushes",
+                        5, "win percentage:", (100*(float) win_count/(float) game_count), "%\n");
+                    fflush(stdout);
                 }
 
                 // free memory
@@ -392,7 +403,6 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
                 free(stand);
                 exit(1);
             }
-            game_count++;
         }
         else if (strcmp(message, "QUIT") == 0) {
             printf("got quit message\n");
@@ -418,7 +428,7 @@ static void play(bool isTraining, decisionmaker_t* decisionmaker, char* name, ch
         }
     }
     printf("closing connection\n");
-    printf("Out of %d games, we won %d, pushed %d, and lost %d.\n", game_count, win_count, push_count, loss_count);
+    // printf("%d games , we won %d, pushed %d, and lost %d.\n", game_count, win_count, push_count, loss_count);
     terminate_client_connection(new_socket);
     free(hit);
     free(stand);
