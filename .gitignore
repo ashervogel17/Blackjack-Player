@@ -1,3 +1,9 @@
 *.o
 .vscode/*
-.data/*
+cards/cardstest
+dealer/dealer
+network/server
+network/client
+network/serverTest
+network/clientTest
+player/player
