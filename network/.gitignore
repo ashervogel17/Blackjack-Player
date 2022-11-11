@@ -1,0 +1,8 @@
+server
+client
+serverTest
+clientTest
+*.o
+*.a
+*~
+train_server.sh
